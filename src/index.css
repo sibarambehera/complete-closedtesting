@@ -5413,3 +5413,245 @@ a {
 
     overflow: visible;
 }
+
+/* ================================
+   Daily Standup Modal
+================================ */
+
+.daily-standup-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(16, 24, 40, 0.55);
+    box-sizing: border-box;
+}
+
+.daily-standup-modal {
+    width: min(1100px, 100%);
+    max-height: 90vh;
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #eaecf0;
+    box-shadow: 0 20px 50px rgba(16, 24, 40, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.daily-standup-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 22px 24px;
+    border-bottom: 1px solid #eaecf0;
+}
+
+.daily-standup-modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #101828;
+}
+
+.daily-standup-modal-header p {
+    margin: 6px 0 0;
+    font-size: 14px;
+    color: #667085;
+}
+
+.daily-standup-modal-close {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #eaecf0;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #667085;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.daily-standup-modal-close:hover {
+    background: #f9fafb;
+    color: #101828;
+}
+
+.daily-standup-modal-body {
+    padding: 24px;
+    overflow-y: auto;
+}
+
+.daily-standup-modal-body p {
+    margin: 0;
+    color: #667085;
+    font-size: 14px;
+}
+
+@media (max-width: 600px) {
+    .daily-standup-modal-overlay {
+        padding: 12px;
+    }
+
+    .daily-standup-modal {
+        max-height: 94vh;
+        border-radius: 14px;
+    }
+
+    .daily-standup-modal-header {
+        padding: 18px;
+    }
+
+    .daily-standup-modal-body {
+        padding: 18px;
+    }
+}
+
+.tester-daily-standup-button {
+    border: none;
+    border-radius: 8px;
+    padding: 9px 14px;
+    background: #1976f3;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.tester-daily-standup-button:hover {
+    background: #1565c0;
+}
+
+.tester-proof-input {
+    display: none;
+}
+
+.tester-daily-proof-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tester-proof-upload-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 10px;
+    border-radius: 7px;
+    background: #1976f3;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.tester-proof-upload-button:hover {
+    background: #1565c0;
+}
+
+.tester-proof-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 10px;
+    border-radius: 7px;
+    background: #eef4ff;
+    color: #1976f3;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.tester-proof-link:hover {
+    background: #dce9ff;
+}
+
+.tester-daily-proof-section > div:last-child {
+    color: #667085;
+    font-size: 13px;
+}
+
+.developer-daily-activity-button {
+    border: 1px solid #1976f3;
+    border-radius: 7px;
+    padding: 7px 10px;
+    background: #ffffff;
+    color: #1976f3;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.developer-daily-activity-button:hover {
+    background: #eef4ff;
+}
+
+/* =================================
+   Daily Standup Modal Card Layout
+================================= */
+
+.daily-standup-modal .tester-daily-item > div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.daily-standup-modal .tester-daily-item > div:first-child strong {
+    line-height: 1.3;
+}
+
+.daily-standup-modal .tester-daily-item > div:first-child span {
+    line-height: 1.3;
+}
+
+.daily-standup-modal .tester-daily-item > div:nth-child(2) strong {
+    line-height: 1.3;
+}
+
+.daily-standup-modal .tester-daily-item > div:nth-child(2) span {
+    line-height: 1.3;
+}
+
+.daily-standup-modal .tester-daily-proof-section {
+    gap: 10px;
+}
+
+.developer-daily-test-button {
+    width: 100%;
+    border: 1px solid #1976f3;
+    border-radius: 7px;
+    padding: 8px 10px;
+    background: #1976f3;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.developer-daily-test-button:hover {
+    background: #1565c0;
+}
+
+.developer-daily-test-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.daily-testing-status {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.daily-status-tested {
+    color: #067647;
+    font-size: 13px;
+    font-weight: 600;
+}

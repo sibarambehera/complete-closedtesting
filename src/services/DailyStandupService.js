@@ -2,6 +2,7 @@ import {
     doc,
     getDoc,
     setDoc,
+    updateDoc,
     serverTimestamp,
 } from "firebase/firestore";
 
@@ -320,4 +321,97 @@ export async function initializeDailyStandups({
 
         activities,
     };
+}
+
+export async function submitDailyProof({
+    sprintTesterId,
+    dayNumber,
+    proofUrl,
+}) {
+    if (!sprintTesterId) {
+        throw new Error("Sprint Tester ID is required.");
+    }
+
+    if (!dayNumber) {
+        throw new Error("Day number is required.");
+    }
+
+    if (!proofUrl) {
+        throw new Error("Proof URL is required.");
+    }
+
+    const dailyStandupRef = doc(
+        db,
+        "DailyStandup",
+        sprintTesterId
+    );
+
+    const activityKey = `activities.day${dayNumber}`;
+
+    await updateDoc(dailyStandupRef, {
+        [`${activityKey}.proofUrl`]: proofUrl,
+        [`${activityKey}.proofSubmittedAt`]: serverTimestamp(),
+    });
+
+    return {
+        dayNumber,
+        proofUrl,
+    };
+}
+
+export async function markDailyActivityTested({
+    sprintTesterId,
+    dayNumber,
+    developerUid,
+}) {
+    if (!sprintTesterId) {
+        throw new Error("Sprint Tester ID is required.");
+    }
+
+    if (!dayNumber) {
+        throw new Error("Day number is required.");
+    }
+
+    if (!developerUid) {
+        throw new Error("Developer UID is required.");
+    }
+
+    const dailyStandupRef = doc(
+        db,
+        "DailyStandup",
+        sprintTesterId
+    );
+
+    const snapshot = await getDoc(dailyStandupRef);
+
+    if (!snapshot.exists()) {
+        throw new Error("DailyStandup record not found.");
+    }
+
+    const data = snapshot.data();
+    const activity = data.activities?.[`day${dayNumber}`];
+
+    if (!activity) {
+        throw new Error(
+            `Day ${dayNumber} activity not found.`
+        );
+    }
+
+    if (!activity.proofUrl) {
+        throw new Error(
+            "Tester has not submitted proof for this day."
+        );
+    }
+
+    if (activity.tested) {
+        return;
+    }
+
+    await updateDoc(dailyStandupRef, {
+        [`activities.day${dayNumber}.tested`]: true,
+        [`activities.day${dayNumber}.testedAt`]:
+            serverTimestamp(),
+        [`activities.day${dayNumber}.testedBy`]:
+            developerUid,
+    });
 }

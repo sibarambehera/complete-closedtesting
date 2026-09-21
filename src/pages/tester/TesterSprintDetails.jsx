@@ -23,6 +23,7 @@ import {
     getDailyStandups,
     initializeDailyStandups,
 } from "../../services/DailyStandupService";
+import DailyStandupModal from "../../components/DailyStandupModal";
 
 
 function TesterSprintDetails() {
@@ -68,7 +69,7 @@ function TesterSprintDetails() {
         setError,
     ] = useState("");
 
-
+    const [isDailyStandupOpen, setIsDailyStandupOpen] = useState(false);
     // =====================================================
     // Load Sprint Details
     // =====================================================
@@ -372,41 +373,41 @@ function TesterSprintDetails() {
         <div className="tester-sprint-details">
 
 
-            
+
 
 
             <div className="tester-sprint-content">
-{/* =================================================
+                {/* =================================================
                 Header
             ================================================= */}
 
-            <div className="tester-sprint-details-header">
+                <div className="tester-sprint-details-header">
 
-                <button
-                    type="button"
-                    className="tester-back-button"
-                    onClick={() =>
-                        navigate(
-                            "/tester/testing-sprints"
-                        )
-                    }
-                >
-                    <ArrowLeft size={18} />
-                    Back
-                </button>
+                    <button
+                        type="button"
+                        className="tester-back-button"
+                        onClick={() =>
+                            navigate(
+                                "/tester/testing-sprints"
+                            )
+                        }
+                    >
+                        <ArrowLeft size={18} />
+                        Back
+                    </button>
 
-                <div>
-                    <h1>
-                        Testing Sprint
-                    </h1>
+                    <div>
+                        <h1>
+                            Testing Sprint
+                        </h1>
 
-                    <p>
-                        Complete your daily testing
-                        activities and submit proof.
-                    </p>
+                        <p>
+                            Complete your daily testing
+                            activities and submit proof.
+                        </p>
+                    </div>
+
                 </div>
-
-            </div>
                 {/* App / Sprint Information */}
                 <div className="tester-sprint-info-card">
 
@@ -491,7 +492,13 @@ function TesterSprintDetails() {
                         <span>
                             {sprint.durationDays} Days
                         </span>
-
+                        <button
+                            type="button"
+                            className="tester-daily-standup-button"
+                            onClick={() => setIsDailyStandupOpen(true)}
+                        >
+                            View Daily Activity
+                        </button>
                     </div>
 
 
@@ -557,7 +564,12 @@ function TesterSprintDetails() {
                 </div>
 
             </div>
-
+            <DailyStandupModal
+                isOpen={isDailyStandupOpen}
+                onClose={() => setIsDailyStandupOpen(false)}
+                dailyActivities={dailyActivities}
+                sprintTesterId={sprintTesterId}
+            />
         </div>
     );
 }

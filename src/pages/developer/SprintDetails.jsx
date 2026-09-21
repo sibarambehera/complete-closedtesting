@@ -21,6 +21,8 @@ import {
     markTesterDownloaded,
     markTesterTested,
 } from "../../services/AppService";
+import DeveloperDailyStandupModal from "../../components/daily-standup/DeveloperDailyStandupModal";
+
 
 function SprintDetails() {
     const navigate = useNavigate();
@@ -32,6 +34,8 @@ function SprintDetails() {
     const [testers, setTesters] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [isDailyStandupOpen, setIsDailyStandupOpen] = useState(false);
+    const [selectedSprintTesterId, setSelectedSprintTesterId] = useState(null);
 
     const downloadedCount = testers.filter(
         (tester) => tester.downloaded === true
@@ -39,7 +43,10 @@ function SprintDetails() {
 
     const testerCount = testers.length;
 
-
+    const handleOpenDailyActivity = (tester) => {
+        setSelectedSprintTesterId(tester.sprintTesterId);
+        setIsDailyStandupOpen(true);
+    };
 
     useEffect(() => {
         const loadSprint = async () => {
@@ -939,7 +946,14 @@ function SprintDetails() {
                                             >
                                                 View proof
                                             </button>
-
+                                            {/* Daily Activity */}
+                                            <button
+                                                type="button"
+                                                className="developer-daily-activity-button"
+                                                onClick={() => handleOpenDailyActivity(tester)}
+                                            >
+                                                Daily Activity
+                                            </button>
                                             {tester.tested ? (
 
                                                 <span className="tester-status tested">
@@ -983,7 +997,15 @@ function SprintDetails() {
                 </div>
 
             </div>
-
+            <DeveloperDailyStandupModal
+                isOpen={isDailyStandupOpen}
+                onClose={() => {
+                    setIsDailyStandupOpen(false);
+                    setSelectedSprintTesterId(null);
+                }}
+                sprintTesterId={selectedSprintTesterId}
+                developerUid={user.uid}
+            />
         </div>
     );
 }
