@@ -78,3 +78,55 @@ export async function uploadDailyProof(file, sprintTesterId, dayNumber) {
         fileName,
     };
 }
+
+export async function uploadPaymentProof(
+    file,
+    sprintTesterId,
+    dayNumber
+) {
+    if (!file) {
+        throw new Error("Payment proof image is required.");
+    }
+
+    if (!sprintTesterId) {
+        throw new Error("Sprint Tester ID is required.");
+    }
+
+    if (!dayNumber) {
+        throw new Error("Day number is required.");
+    }
+
+    if (!file.type.startsWith("image/")) {
+        throw new Error(
+            "Only image files are allowed for payment proof."
+        );
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+        throw new Error(
+            "Payment proof image must be less than 5 MB."
+        );
+    }
+
+    const fileExtension =
+        file.name.split(".").pop()?.toLowerCase() || "jpg";
+
+    const fileName =
+        `payment-proof-${Date.now()}.${fileExtension}`;
+
+    const storagePath =
+        `daily-standup/${sprintTesterId}/day${dayNumber}/${fileName}`;
+
+    const storageRef = ref(storage, storagePath);
+
+    await uploadBytes(storageRef, file);
+
+    const downloadUrl =
+        await getDownloadURL(storageRef);
+
+    return {
+        downloadUrl,
+        storagePath,
+        fileName,
+    };
+}

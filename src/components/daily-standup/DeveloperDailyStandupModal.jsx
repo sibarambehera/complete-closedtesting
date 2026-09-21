@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
+
+import { uploadPaymentProof } from "../../services/StorageService";
 
 import {
     getDailyStandups,
     markDailyActivityTested,
+    markDailyActivityPaid,
 } from "../../services/DailyStandupService";
 
 function DeveloperDailyStandupModal({
@@ -15,7 +18,9 @@ function DeveloperDailyStandupModal({
     const [activities, setActivities] = useState([]);
     const [loading, setLoading] = useState(false);
     const [testingDay, setTestingDay] = useState(null);
+    const [payingDay, setPayingDay] = useState(null);
     const [error, setError] = useState("");
+    const paymentFileInputRef = useRef(null);
 
     useEffect(() => {
         if (!isOpen || !sprintTesterId) {
@@ -88,13 +93,13 @@ function DeveloperDailyStandupModal({
             setActivities((currentActivities) =>
                 currentActivities.map((activity) =>
                     activity.dayNumber ===
-                    daily.dayNumber
+                        daily.dayNumber
                         ? {
-                              ...activity,
-                              tested: true,
-                              testedAt: new Date(),
-                              testedBy: developerUid,
-                          }
+                            ...activity,
+                            tested: true,
+                            testedAt: new Date(),
+                            testedBy: developerUid,
+                        }
                         : activity
                 )
             );
@@ -111,6 +116,62 @@ function DeveloperDailyStandupModal({
             );
         } finally {
             setTestingDay(null);
+        }
+    };
+
+    const handleMarkPaid = async (event, daily) => {
+        const file = event.target.files?.[0];
+
+        if (!file) {
+            return;
+        }
+
+        try {
+            setError("");
+            setPayingDay(daily.dayNumber);
+
+            const uploadResult = await uploadPaymentProof(
+                file,
+                sprintTesterId,
+                daily.dayNumber
+            );
+
+            await markDailyActivityPaid({
+                sprintTesterId,
+                dayNumber: daily.dayNumber,
+                developerUid,
+                paymentProofUrl: uploadResult.downloadUrl,
+            });
+
+            setActivities((currentActivities) =>
+                currentActivities.map((activity) =>
+                    activity.dayNumber === daily.dayNumber
+                        ? {
+                            ...activity,
+                            paymentStatus: "paid",
+                            paidAt: new Date(),
+                            paidBy: developerUid,
+                            paymentProofUrl:
+                                uploadResult.downloadUrl,
+                        }
+                        : activity
+                )
+            );
+
+        } catch (err) {
+            console.error(
+                "Failed to mark daily activity as paid:",
+                err
+            );
+
+            setError(
+                err.message ||
+                "Failed to upload payment proof."
+            );
+        } finally {
+            setPayingDay(null);
+
+            event.target.value = "";
         }
     };
 
@@ -209,10 +270,14 @@ function DeveloperDailyStandupModal({
                                             ).toFixed(2)}
                                         </strong>
 
-                                        <span>
-                                            {
-                                                daily.paymentStatus
-                                            }
+                                        <span className={
+                                            daily.paymentStatus === "paid"
+                                                ? "daily-payment-status-paid"
+                                                : "daily-payment-status-pending"
+                                        }>
+                                            {daily.paymentStatus === "paid"
+                                                ? "Paid"
+                                                : "Payment Pending"}
                                         </span>
                                     </div>
 
@@ -257,9 +322,7 @@ function DeveloperDailyStandupModal({
                                                     type="button"
                                                     className="developer-daily-test-button"
                                                     onClick={() =>
-                                                        handleMarkTested(
-                                                            daily
-                                                        )
+                                                        handleMarkTested(daily)
                                                     }
                                                     disabled={
                                                         testingDay ===
@@ -267,7 +330,7 @@ function DeveloperDailyStandupModal({
                                                     }
                                                 >
                                                     {testingDay ===
-                                                    daily.dayNumber
+                                                        daily.dayNumber
                                                         ? "Testing..."
                                                         : "✓ Mark Tested"}
                                                 </button>
@@ -278,6 +341,52 @@ function DeveloperDailyStandupModal({
                                                     Not Tested
                                                 </span>
 
+                                            )}
+
+                                            {/* Payment */}
+
+                                            {daily.tested && daily.paymentStatus !== "paid" && (
+
+                                                <div>
+
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        id={`payment-proof-${daily.dayNumber}`}
+                                                        style={{ display: "none" }}
+                                                        onChange={(event) =>
+                                                            handleMarkPaid(event, daily)
+                                                        }
+                                                    />
+
+                                                    <label
+                                                        htmlFor={`payment-proof-${daily.dayNumber}`}
+                                                        className="developer-daily-paid-button"
+                                                    >
+                                                        ✓ Mark Paid
+                                                    </label>
+
+                                                </div>
+
+                                            )}
+
+                                            {daily.paymentStatus === "paid" && (
+                                                <>
+                                                    <span className="daily-status-paid">
+                                                        ✓ Paid
+                                                    </span>
+
+                                                    {daily.paymentProofUrl && (
+                                                        <a
+                                                            href={daily.paymentProofUrl}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="tester-proof-link"
+                                                        >
+                                                            View Payment Proof
+                                                        </a>
+                                                    )}
+                                                </>
                                             )}
 
                                         </div>

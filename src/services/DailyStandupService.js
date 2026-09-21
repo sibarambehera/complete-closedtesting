@@ -415,3 +415,81 @@ export async function markDailyActivityTested({
             developerUid,
     });
 }
+
+export async function markDailyActivityPaid({
+    sprintTesterId,
+    dayNumber,
+    developerUid,
+    paymentProofUrl,
+}) {
+    if (!sprintTesterId) {
+        throw new Error("Sprint Tester ID is required.");
+    }
+
+    if (!dayNumber) {
+        throw new Error("Day number is required.");
+    }
+
+    if (!developerUid) {
+        throw new Error("Developer UID is required.");
+    }
+
+    if (!paymentProofUrl) {
+        throw new Error(
+            "Payment proof URL is required."
+        );
+    }
+
+    const dailyStandupRef = doc(
+        db,
+        "DailyStandup",
+        sprintTesterId
+    );
+
+    const snapshot = await getDoc(
+        dailyStandupRef
+    );
+
+    if (!snapshot.exists()) {
+        throw new Error(
+            "DailyStandup record not found."
+        );
+    }
+
+    const data = snapshot.data();
+
+    const activity =
+        data.activities?.[`day${dayNumber}`];
+
+    if (!activity) {
+        throw new Error(
+            `Day ${dayNumber} activity not found.`
+        );
+    }
+
+    if (!activity.tested) {
+        throw new Error(
+            "This day must be tested before payment."
+        );
+    }
+
+    if (activity.paymentStatus === "paid") {
+        throw new Error(
+            "This day has already been paid."
+        );
+    }
+
+    await updateDoc(dailyStandupRef, {
+        [`activities.day${dayNumber}.paymentStatus`]:
+            "paid",
+
+        [`activities.day${dayNumber}.paidAt`]:
+            serverTimestamp(),
+
+        [`activities.day${dayNumber}.paidBy`]:
+            developerUid,
+
+        [`activities.day${dayNumber}.paymentProofUrl`]:
+            paymentProofUrl,
+    });
+}
