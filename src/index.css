@@ -5700,3 +5700,248 @@ a {
     color: #b54708;
     font-weight: 600;
 }
+
+/******testers*****/
+/* ================================
+   Admin Testers
+================================ */
+
+.admin-testers-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 0 20px 0;
+}
+
+.admin-testers-search {
+    width: 420px;
+    max-width: 100%;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 10px 14px;
+
+    border: 1px solid #d9dee8;
+    border-radius: 8px;
+
+    background: #ffffff;
+}
+
+.admin-testers-search svg {
+    color: #667085;
+    flex-shrink: 0;
+}
+
+.admin-testers-search input {
+    width: 100%;
+
+    border: none;
+    outline: none;
+
+    font-size: 14px;
+    color: #101828;
+
+    background: transparent;
+}
+
+.admin-testers-search input::placeholder {
+    color: #98a2b3;
+}
+
+
+/* Table */
+
+.admin-testers-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+
+    border: 1px solid #e4e7ec;
+    border-radius: 10px;
+}
+
+.admin-testers-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    min-width: 900px;
+}
+
+.admin-testers-table th {
+    padding: 14px 16px;
+
+    text-align: left;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    color: #475467;
+
+    background: #f8fafc;
+
+    border-bottom: 1px solid #e4e7ec;
+
+    white-space: nowrap;
+}
+
+.admin-testers-table td {
+    padding: 14px 16px;
+
+    font-size: 14px;
+    color: #475467;
+
+    border-bottom: 1px solid #eaecf0;
+
+    vertical-align: middle;
+}
+
+.admin-testers-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.admin-testers-table tbody tr:hover {
+    background: #fafcff;
+}
+
+
+/* Tester name */
+
+.admin-tester-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    min-width: 150px;
+}
+
+.admin-tester-name-cell strong {
+    color: #101828;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.admin-tester-avatar {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #eef4ff;
+    color: #1769ff;
+
+    flex-shrink: 0;
+}
+
+
+/* Status */
+
+.admin-tester-status-select {
+    min-width: 95px;
+
+    padding: 7px 10px;
+
+    border: 1px solid #d0d5dd;
+    border-radius: 6px;
+
+    background: #ffffff;
+
+    font-size: 13px;
+
+    outline: none;
+    cursor: pointer;
+}
+
+.admin-tester-status-select:focus {
+    border-color: #1976f3;
+}
+
+
+/* Counts */
+
+.admin-tester-count {
+    display: inline-flex;
+
+    min-width: 32px;
+    height: 28px;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 9px;
+
+    border-radius: 14px;
+
+    background: #ecfdf3;
+    color: #027a48;
+
+    font-weight: 600;
+}
+
+.admin-tester-count.incomplete {
+    background: #fff4e5;
+    color: #b54708;
+}
+
+/* assign */
+
+/* =================================
+   Admin Tester Assignment
+================================= */
+
+.admin-tester-assignment-status {
+    min-width: 90px;
+}
+
+.admin-tester-assignment-status span {
+    display: inline-flex;
+
+    padding: 5px 10px;
+
+    border-radius: 14px;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.admin-tester-assignment-status span.active {
+    background: #ecfdf3;
+    color: #027a48;
+}
+
+.admin-tester-assignment-status span.inactive {
+    background: #f2f4f7;
+    color: #667085;
+}
+
+
+.admin-tester-assignment-stat {
+    min-width: 110px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.admin-tester-assignment-stat span {
+    font-size: 11px;
+    color: #667085;
+}
+
+.admin-tester-assignment-stat strong {
+    font-size: 14px;
+    color: #101828;
+}
+
+
+.admin-tester-row.inactive {
+    background: #fafafa;
+}
+
+.admin-tester-row.inactive:hover {
+    background: #fafafa;
+}

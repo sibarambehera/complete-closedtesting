@@ -78,18 +78,106 @@ export async function getAdminApps() {
 }
 
 export async function getAllAdminTesters() {
-  const testersQuery = query(
-    collection(db, "Employee"),
-    where("role", "==", "tester")
-  );
+    const [
+        testerSnapshot,
+        sprintTesterSnapshot,
+    ] = await Promise.all([
+        getDocs(
+            query(
+                collection(db, "Employee"),
+                where("role", "==", "tester")
+            )
+        ),
+        getDocs(
+            collection(db, "SprintTesters")
+        ),
+    ]);
 
-  const snapshot = await getDocs(testersQuery);
+    // Build tester statistics by tester UID
+    const testerStats = {};
 
-  return snapshot.docs.map((testerDoc) => ({
-    testerId: testerDoc.id,
-    ...testerDoc.data(),
-  }));
+    sprintTesterSnapshot.docs.forEach(
+        (sprintTesterDoc) => {
+            const sprintTester =
+                sprintTesterDoc.data();
+
+            const testerUid =
+                sprintTester.testerUid;
+
+            if (!testerUid) {
+                return;
+            }
+
+            if (!testerStats[testerUid]) {
+                testerStats[testerUid] = {
+                    testedApps: 0,
+                    testIncompleteApps: 0,
+                };
+            }
+
+            if (sprintTester.tested === true) {
+                testerStats[testerUid]
+                    .testedApps += 1;
+            }
+
+            if (
+                sprintTester.testIncomplete === true
+            ) {
+                testerStats[testerUid]
+                    .testIncompleteApps += 1;
+            }
+        }
+    );
+
+    return testerSnapshot.docs.map(
+        (testerDoc) => {
+            const tester = testerDoc.data();
+
+            const stats =
+                testerStats[tester.uid] || {
+                    testedApps: 0,
+                    testIncompleteApps: 0,
+                };
+
+            return {
+                testerId: testerDoc.id,
+                ...tester,
+
+                testedApps:
+                    stats.testedApps,
+
+                testIncompleteApps:
+                    stats.testIncompleteApps,
+            };
+        }
+    );
 }
+
+export async function updateTesterStatus(testerId, status) {
+    if (!testerId) {
+        throw new Error("Tester ID is required.");
+    }
+
+    if (!["active", "inactive"].includes(status)) {
+        throw new Error("Invalid tester status.");
+    }
+
+    const testerRef = doc(
+        db,
+        "Employee",
+        testerId
+    );
+
+    await updateDoc(testerRef, {
+        status,
+    });
+
+    return {
+        testerId,
+        status,
+    };
+}
+
 
 export async function getDeveloperApp(
   appId,
@@ -370,57 +458,119 @@ export async function getAdminTestingSprint(sprintId) {
   };
 }
 
-export async function getAdminTesters(
-  sprintId
-) {
-  if (!sprintId) {
-    throw new Error(
-      "Testing Sprint ID is required."
+export async function getAdminTesters(sprintId) {
+    if (!sprintId) {
+        throw new Error("Sprint ID is required.");
+    }
+
+    const [
+        testerSnapshot,
+        sprintTesterSnapshot,
+    ] = await Promise.all([
+        getDocs(
+            query(
+                collection(db, "Employee"),
+                where("role", "==", "tester")
+            )
+        ),
+
+        getDocs(
+            collection(db, "SprintTesters")
+        ),
+    ]);
+
+    // Find testers already assigned to this sprint
+    const assignedTesterUids = new Set();
+
+    sprintTesterSnapshot.docs.forEach(
+        (sprintTesterDoc) => {
+            const sprintTester =
+                sprintTesterDoc.data();
+
+            if (
+                sprintTester.sprintId ===
+                sprintId
+            ) {
+                assignedTesterUids.add(
+                    sprintTester.testerUid
+                );
+            }
+        }
     );
-  }
 
-  // Get all testers
-  const testersQuery = query(
-    collection(db, "Employee"),
-    where("role", "==", "tester")
-  );
+    // Calculate tester statistics
+    const testerStats = {};
 
-  const testerSnapshot =
-    await getDocs(testersQuery);
+    sprintTesterSnapshot.docs.forEach(
+        (sprintTesterDoc) => {
+            const sprintTester =
+                sprintTesterDoc.data();
 
-  // Get testers already assigned to this Sprint
-  const assignedQuery = query(
-    collection(db, "SprintTesters"),
-    where(
-      "sprintId",
-      "==",
-      sprintId
-    )
-  );
+            const testerUid =
+                sprintTester.testerUid;
 
-  const assignedSnapshot =
-    await getDocs(assignedQuery);
+            if (!testerUid) {
+                return;
+            }
 
-  const assignedTesterUids =
-    new Set(
-      assignedSnapshot.docs.map(
-        (testerDoc) =>
-          testerDoc.data().testerUid
-      )
+            if (!testerStats[testerUid]) {
+                testerStats[testerUid] = {
+                    testedApps: 0,
+                    testIncompleteApps: 0,
+                };
+            }
+
+            if (
+                sprintTester.tested ===
+                true
+            ) {
+                testerStats[testerUid]
+                    .testedApps += 1;
+            }
+
+            if (
+                sprintTester.testIncomplete ===
+                true
+            ) {
+                testerStats[testerUid]
+                    .testIncompleteApps += 1;
+            }
+        }
     );
 
-  // Return only testers who are NOT already assigned
-  return testerSnapshot.docs
-    .map((testerDoc) => ({
-      testerId: testerDoc.id,
-      ...testerDoc.data(),
-    }))
-    .filter(
-      (tester) =>
-        !assignedTesterUids.has(
-          tester.uid
-        )
-    );
+    // Return testers not already assigned
+    return testerSnapshot.docs
+        .filter((testerDoc) => {
+            return !assignedTesterUids.has(
+                testerDoc.data().uid
+            );
+        })
+        .map((testerDoc) => {
+            const tester =
+                testerDoc.data();
+
+            const stats =
+                testerStats[tester.uid] || {
+                    testedApps: 0,
+                    testIncompleteApps: 0,
+                };
+
+            return {
+                testerId: testerDoc.id,
+                ...tester,
+
+                testedApps:
+                    stats.testedApps,
+
+                testIncompleteApps:
+                    stats.testIncompleteApps,
+            };
+        })
+        .sort(
+            (a, b) =>
+                a.testedApps -
+                b.testedApps
+        );
 }
 
 export async function assignTestersToSprint({

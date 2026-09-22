@@ -103,8 +103,13 @@ function ManageTestingSprint() {
                 sprint?.testerRequired || 0
             );
 
+        const activeTesters = testers.filter(
+            (tester) =>
+                tester.status !== "inactive"
+        );
+
         setSelectedTesters(
-            testers
+            activeTesters
                 .slice(0, max)
                 .map(
                     (tester) =>
@@ -116,6 +121,7 @@ function ManageTestingSprint() {
     const clearSelection = () => {
         setSelectedTesters([]);
     };
+
     const handleAssignTesters = async () => {
         if (selectedTesters.length === 0) {
             alert("Please select at least one tester.");
@@ -125,10 +131,11 @@ function ManageTestingSprint() {
         try {
             setIsAssigning(true);
 
-            const result = await assignTestersToSprint({
-                sprintId,
-                testerIds: selectedTesters,
-            });
+            const result =
+                await assignTestersToSprint({
+                    sprintId,
+                    testerIds: selectedTesters,
+                });
 
             alert(
                 `${result.assignedCount} tester(s) assigned successfully.`
@@ -142,6 +149,14 @@ function ManageTestingSprint() {
                 await getAdminTesters(sprintId);
 
             setTesters(updatedTesters);
+
+            // Reload assigned testers
+            const updatedAssignedTesters =
+                await getSprintTesters(sprintId);
+
+            setAssignedTesters(
+                updatedAssignedTesters
+            );
 
         } catch (error) {
             console.error(
@@ -425,88 +440,151 @@ function ManageTestingSprint() {
 
                     <div className="admin-tester-list">
 
-                        {testers.map(
-                            (tester) => {
+                        {testers.map((tester) => {
 
-                                const isSelected =
-                                    selectedTesters.includes(
-                                        tester.testerId
-                                    );
+                            const isSelected =
+                                selectedTesters.includes(
+                                    tester.testerId
+                                );
 
-                                const maxReached =
-                                    selectedTesters.length >=
-                                    Number(
-                                        sprint.testerRequired
-                                    );
+                            const maxReached =
+                                selectedTesters.length >=
+                                Number(
+                                    sprint.testerRequired
+                                );
 
-                                return (
-                                    <div
-                                        key={
-                                            tester.testerId
-                                        }
-                                        className={`admin-tester-row ${isSelected
-                                            ? "selected"
+                            const isInactive =
+                                tester.status === "inactive";
+
+                            const isDisabled =
+                                isInactive ||
+                                (!isSelected && maxReached);
+
+                            return (
+                                <div
+                                    key={tester.testerId}
+                                    className={`admin-tester-row ${isSelected
+                                        ? "selected"
+                                        : ""
+                                        } ${isInactive
+                                            ? "inactive"
                                             : ""
-                                            }`}
-                                        onClick={() => {
+                                        }`}
+                                    onClick={() => {
 
-                                            if (
-                                                !isSelected &&
-                                                maxReached
-                                            ) {
-                                                return;
-                                            }
+                                        if (isInactive) {
+                                            return;
+                                        }
 
-                                            toggleTester(
-                                                tester.testerId
-                                            );
-                                        }}
+                                        if (
+                                            !isSelected &&
+                                            maxReached
+                                        ) {
+                                            return;
+                                        }
+
+                                        toggleTester(
+                                            tester.testerId
+                                        );
+                                    }}
+                                    style={{
+                                        cursor: isDisabled
+                                            ? "not-allowed"
+                                            : "pointer",
+                                        opacity: isInactive
+                                            ? 0.6
+                                            : 1,
+                                    }}
+                                >
+
+                                    {/* Checkbox */}
+                                    <div
+                                        className="admin-tester-check"
                                     >
-
-                                        <div className="admin-tester-check">
-
-                                            {isSelected && (
-                                                <Check
-                                                    size={
-                                                        16
-                                                    }
-                                                />
-                                            )}
-
-                                        </div>
+                                        {isSelected && (
+                                            <Check
+                                                size={16}
+                                            />
+                                        )}
+                                    </div>
 
 
-                                        <div className="admin-tester-avatar">
-                                            {(
-                                                tester.name ||
-                                                "T"
-                                            )
-                                                .charAt(
-                                                    0
-                                                )
-                                                .toUpperCase()}
-                                        </div>
+                                    {/* Avatar */}
+                                    <div className="admin-tester-avatar">
+                                        {(
+                                            tester.name ||
+                                            "T"
+                                        )
+                                            .charAt(0)
+                                            .toUpperCase()}
+                                    </div>
 
 
-                                        <div className="admin-tester-info">
+                                    {/* Tester Information */}
+                                    <div className="admin-tester-info">
 
-                                            <strong>
-                                                {tester.name ||
-                                                    "Tester"}
-                                            </strong>
+                                        <strong>
+                                            {tester.name ||
+                                                "Tester"}
+                                        </strong>
 
-                                            <span>
-                                                {
-                                                    tester.email
-                                                }
-                                            </span>
-
-                                        </div>
+                                        <span>
+                                            {tester.email}
+                                        </span>
 
                                     </div>
-                                );
-                            }
-                        )}
+
+
+                                    {/* Status */}
+                                    <div className="admin-tester-assignment-status">
+
+                                        <span
+                                            className={
+                                                isInactive
+                                                    ? "inactive"
+                                                    : "active"
+                                            }
+                                        >
+                                            {isInactive
+                                                ? "Inactive"
+                                                : "Active"}
+                                        </span>
+
+                                    </div>
+
+
+                                    {/* Tested Apps */}
+                                    <div className="admin-tester-assignment-stat">
+
+                                        <span>
+                                            Tested Apps
+                                        </span>
+
+                                        <strong>
+                                            {tester.testedApps ||
+                                                0}
+                                        </strong>
+
+                                    </div>
+
+
+                                    {/* Incomplete Apps */}
+                                    <div className="admin-tester-assignment-stat">
+
+                                        <span>
+                                            Incomplete Apps
+                                        </span>
+
+                                        <strong>
+                                            {tester.testIncompleteApps ||
+                                                0}
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+                            );
+                        })}
 
                     </div>
                 )}

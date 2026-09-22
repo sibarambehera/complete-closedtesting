@@ -42,6 +42,7 @@ export async function registerUser({
       email: email.trim(),
       phone: phone.trim(),
       role: role,
+      status: "active",
       createdAt: serverTimestamp()
     }
   );
