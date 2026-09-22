@@ -41,16 +41,16 @@ function AdminLayout({ children }) {
             path: "/admin/testing-sprints",
             icon: ClipboardList,
         },
-        {
-            label: "Payments",
-            path: "/admin/payments",
-            icon: CreditCard,
-        },
-        {
-            label: "Settings",
-            path: "/admin/settings",
-            icon: Settings,
-        },
+        // {
+        //     label: "Payments",
+        //     path: "/admin/payments",
+        //     icon: CreditCard,
+        // },
+        // {
+        //     label: "Settings",
+        //     path: "/admin/settings",
+        //     icon: Settings,
+        // },
     ];
 
     const handleLogout = async () => {
