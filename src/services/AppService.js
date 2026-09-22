@@ -178,6 +178,74 @@ export async function updateTesterStatus(testerId, status) {
     };
 }
 
+export async function getAllAdminDevelopers() {
+    const developerSnapshot =
+        await getDocs(
+            query(
+                collection(db, "Employee"),
+                where(
+                    "role",
+                    "==",
+                    "developer"
+                )
+            )
+        );
+
+    return developerSnapshot.docs.map(
+        (developerDoc) => {
+            const developer =
+                developerDoc.data();
+
+            return {
+                developerId:
+                    developerDoc.id,
+
+                ...developer,
+            };
+        }
+    );
+}
+
+
+export async function updateDeveloperStatus(
+    developerId,
+    status
+) {
+    if (!developerId) {
+        throw new Error(
+            "Developer ID is required."
+        );
+    }
+
+    if (
+        !["active", "inactive"].includes(
+            status
+        )
+    ) {
+        throw new Error(
+            "Invalid developer status."
+        );
+    }
+
+    const developerRef =
+        doc(
+            db,
+            "Employee",
+            developerId
+        );
+
+    await updateDoc(
+        developerRef,
+        {
+            status,
+        }
+    );
+
+    return {
+        developerId,
+        status,
+    };
+}
 
 export async function getDeveloperApp(
   appId,

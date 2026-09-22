@@ -24,6 +24,7 @@ import TesterTestingSprints from "./pages/tester/TestingSprints";
 import TesterSprintDetails from "./pages/tester/TesterSprintDetails";
 import AdminApps from "./pages/admin/Apps";
 import AdminTesters from "./pages/admin/Testers";
+import AdminDevelopers from "./pages/admin/Developers";
 
 function App() {
   return (
@@ -104,6 +105,16 @@ function App() {
               <ProtectedRoute allowedRole="admin">
                 <AdminLayout>
                   <AdminTesters />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/developers"
+            element={
+              <ProtectedRoute allowedRole="admin">
+                <AdminLayout>
+                  <AdminDevelopers />
                 </AdminLayout>
               </ProtectedRoute>
             }

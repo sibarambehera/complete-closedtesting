@@ -2,6 +2,7 @@ import {
     LayoutDashboard,
     Smartphone,
     Users,
+    UsersRound,
     ClipboardList,
     CreditCard,
     Settings,
@@ -29,6 +30,11 @@ function AdminLayout({ children }) {
             label: "Testers",
             path: "/admin/testers",
             icon: Users,
+        },
+        {
+            label: "Developers",
+            path: "/admin/developers",
+            icon: UsersRound,
         },
         {
             label: "Testing Sprints",
@@ -95,10 +101,9 @@ function AdminLayout({ children }) {
                                 key={item.path}
                                 to={item.path}
                                 className={({ isActive }) =>
-                                    `admin-nav-item ${
-                                        isActive
-                                            ? "active"
-                                            : ""
+                                    `admin-nav-item ${isActive
+                                        ? "active"
+                                        : ""
                                     }`
                                 }
                             >
