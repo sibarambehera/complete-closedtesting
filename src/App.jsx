@@ -26,6 +26,8 @@ import AdminApps from "./pages/admin/Apps";
 import AdminTesters from "./pages/admin/Testers";
 import AdminDevelopers from "./pages/admin/Developers";
 import CompletedTests from "./pages/tester/CompletedTests";
+import Wallet from "./pages/tester/Wallet";
+import Profile from "./pages/tester/Profile";
 
 function App() {
   return (
@@ -85,6 +87,26 @@ function App() {
               <ProtectedRoute allowedRole="tester">
                 <TesterLayout>
                   <CompletedTests />
+                </TesterLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/tester/wallet"
+            element={
+              <ProtectedRoute allowedRole="tester">
+                <TesterLayout>
+                  <Wallet />
+                </TesterLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/tester/profile"
+            element={
+              <ProtectedRoute allowedRole="tester">
+                <TesterLayout>
+                  <Profile />
                 </TesterLayout>
               </ProtectedRoute>
             }
