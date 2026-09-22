@@ -12,8 +12,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
     getAdminTestingSprint,
     getAdminTesters,
+    getSprintTesters,
     assignTestersToSprint,
 } from "../../services/AppService";
+import AdminDailyStandupModal from "../../components/daily-standup/AdminDailyStandupModal";
 
 function ManageTestingSprint() {
 
@@ -22,6 +24,11 @@ function ManageTestingSprint() {
 
     const [sprint, setSprint] = useState(null);
     const [testers, setTesters] = useState([]);
+    const [assignedTesters, setAssignedTesters] = useState([]);
+    const [isDailyActivityOpen, setIsDailyActivityOpen] =
+        useState(false);
+    const [selectedSprintTesterId, setSelectedSprintTesterId] =
+        useState(null);
     const [selectedTesters, setSelectedTesters] =
         useState([]);
 
@@ -46,15 +53,15 @@ function ManageTestingSprint() {
                 const [
                     sprintData,
                     testerData,
+                    assignedTesterData,
                 ] = await Promise.all([
-                    getAdminTestingSprint(
-                        sprintId
-                    ),
+                    getAdminTestingSprint(sprintId),
                     getAdminTesters(sprintId),
+                    getSprintTesters(sprintId),
                 ]);
-
                 setSprint(sprintData);
                 setTesters(testerData);
+                setAssignedTesters(assignedTesterData);
             } catch (err) {
                 console.error(
                     "Failed to load Manage Sprint:",
@@ -150,6 +157,15 @@ function ManageTestingSprint() {
             setIsAssigning(false);
         }
     };
+
+    const handleOpenDailyActivity = (tester) => {
+        setSelectedSprintTesterId(
+            tester.sprintTesterId
+        );
+
+        setIsDailyActivityOpen(true);
+    };
+
     if (loading) {
         return (
             <div className="admin-manage-page">
@@ -531,7 +547,111 @@ function ManageTestingSprint() {
                 </div>
 
             </div>
+            {/* Assigned Testers */}
 
+            <div className="admin-manage-card">
+
+                <div className="admin-tester-header">
+
+                    <div>
+                        <h2>
+                            Assigned Testers
+                        </h2>
+
+                        <p>
+                            Testers currently assigned to this
+                            Testing Sprint.
+                        </p>
+                    </div>
+
+                    <div className="admin-selection-count">
+                        {assignedTesters.length} assigned
+                    </div>
+
+                </div>
+
+                {assignedTesters.length === 0 ? (
+
+                    <div className="admin-no-testers">
+
+                        <Users size={36} />
+
+                        <strong>
+                            No testers assigned
+                        </strong>
+
+                        <p>
+                            Assign testers to this Testing Sprint
+                            to see them here.
+                        </p>
+
+                    </div>
+
+                ) : (
+
+                    <div className="admin-tester-list">
+
+                        {assignedTesters.map((tester) => (
+
+                            <div
+                                key={tester.sprintTesterId}
+                                className="admin-tester-row"
+                                style={{
+                                    cursor: "default",
+                                }}
+                            >
+
+                                <div className="admin-tester-avatar">
+                                    {(
+                                        tester.testerName ||
+                                        "T"
+                                    )
+                                        .charAt(0)
+                                        .toUpperCase()}
+                                </div>
+
+                                <div className="admin-tester-info">
+
+                                    <strong>
+                                        {tester.testerName ||
+                                            "Tester"}
+                                    </strong>
+
+                                    <span>
+                                        {tester.testerEmail || ""}
+                                    </span>
+
+                                </div>
+
+                                <button
+                                    type="button"
+                                    className="admin-select-button"
+                                    onClick={() =>
+                                        handleOpenDailyActivity(
+                                            tester
+                                        )
+                                    }
+                                >
+                                    Daily Activity
+                                </button>
+
+                            </div>
+
+                        ))}
+
+                    </div>
+
+                )}
+
+            </div>
+            <AdminDailyStandupModal
+                isOpen={isDailyActivityOpen}
+                onClose={() => {
+                    setIsDailyActivityOpen(false);
+                    setSelectedSprintTesterId(null);
+                }}
+                sprintTesterId={selectedSprintTesterId}
+            />
         </div>
     );
 }
