@@ -64,6 +64,19 @@ export async function getDeveloperApps(developerUid) {
   }));
 }
 
+export async function getAdminApps() {
+    const appsQuery = query(
+        collection(db, "DeveloperApps")
+    );
+
+    const snapshot = await getDocs(appsQuery);
+
+    return snapshot.docs.map((appDoc) => ({
+        appId: appDoc.id,
+        ...appDoc.data(),
+    }));
+}
+
 export async function getDeveloperApp(
   appId,
   developerUid

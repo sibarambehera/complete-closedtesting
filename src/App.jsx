@@ -7,7 +7,7 @@ import Register from "./pages/Register";
 import DeveloperDashboard from "./pages/developer/DeveloperDashboard";
 import TesterDashboard from "./pages/tester/TesterDashboard";
 import AdminDashboard from "./pages/admin/AdminDashboard";
-import Apps from "./pages/developer/Apps";
+import DeveloperApps from "./pages/developer/Apps";
 import DeveloperLayout from "./layouts/DeveloperLayout";
 import AddApp from "./pages/developer/AddApp";
 import { AuthProvider } from "./context/AuthContext";
@@ -22,6 +22,7 @@ import ManageTestingSprint from "./pages/admin/ManageTestingSprint";
 import TesterLayout from "./layouts/TesterLayout";
 import TesterTestingSprints from "./pages/tester/TestingSprints";
 import TesterSprintDetails from "./pages/tester/TesterSprintDetails";
+import AdminApps from "./pages/admin/Apps";
 
 function App() {
   return (
@@ -87,6 +88,16 @@ function App() {
             }
           />
           <Route
+            path="/admin/apps"
+            element={
+              <ProtectedRoute allowedRole="admin">
+                <AdminLayout>
+                  <AdminApps />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/admin/testing-sprints"
             element={
               <ProtectedRoute allowedRole="admin">
@@ -111,7 +122,7 @@ function App() {
             element={
               <ProtectedRoute allowedRole="developer">
                 <DeveloperLayout>
-                  <Apps />
+                  <DeveloperApps />
                 </DeveloperLayout>
               </ProtectedRoute>
             }
