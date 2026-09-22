@@ -23,6 +23,7 @@ import TesterLayout from "./layouts/TesterLayout";
 import TesterTestingSprints from "./pages/tester/TestingSprints";
 import TesterSprintDetails from "./pages/tester/TesterSprintDetails";
 import AdminApps from "./pages/admin/Apps";
+import AdminTesters from "./pages/admin/Testers";
 
 function App() {
   return (
@@ -93,6 +94,16 @@ function App() {
               <ProtectedRoute allowedRole="admin">
                 <AdminLayout>
                   <AdminApps />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/testers"
+            element={
+              <ProtectedRoute allowedRole="admin">
+                <AdminLayout>
+                  <AdminTesters />
                 </AdminLayout>
               </ProtectedRoute>
             }

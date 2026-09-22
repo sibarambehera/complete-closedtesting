@@ -77,6 +77,20 @@ export async function getAdminApps() {
     }));
 }
 
+export async function getAllAdminTesters() {
+    const testersQuery = query(
+        collection(db, "Employee"),
+        where("role", "==", "tester")
+    );
+
+    const snapshot = await getDocs(testersQuery);
+
+    return snapshot.docs.map((testerDoc) => ({
+        testerId: testerDoc.id,
+        ...testerDoc.data(),
+    }));
+}
+
 export async function getDeveloperApp(
   appId,
   developerUid
