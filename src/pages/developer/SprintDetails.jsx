@@ -937,15 +937,7 @@ function SprintDetails() {
 
                                         <div className="joined-tester-actions">
 
-                                            <button
-                                                type="button"
-                                                className="tester-proof-button"
-                                                disabled={
-                                                    !tester.proofUrl
-                                                }
-                                            >
-                                                View proof
-                                            </button>
+                                            
                                             {/* Daily Activity */}
                                             <button
                                                 type="button"
@@ -962,15 +954,9 @@ function SprintDetails() {
 
                                             ) : tester.downloaded ? (
 
-                                                <button
-                                                    type="button"
-                                                    className="tester-action-button"
-                                                    onClick={() =>
-                                                        handleMarkTested(tester)
-                                                    }
-                                                >
-                                                    ✓ Mark Tested
-                                                </button>
+                                                <span className="tester-status downloaded">
+                                                    Downloaded ✓
+                                                </span>
 
                                             ) : (
 
