@@ -663,6 +663,29 @@ export async function assignTestersToSprint({
       })
     );
 
+  // Prevent inactive testers from being assigned
+  const inactiveTesters =
+    testerDocuments.filter(
+      (tester) =>
+        tester.status === "inactive"
+    );
+
+  if (inactiveTesters.length > 0) {
+    const inactiveTesterNames =
+      inactiveTesters
+        .map(
+          (tester) =>
+            tester.name ||
+            tester.email ||
+            tester.testerId
+        )
+        .join(", ");
+
+    throw new Error(
+      `The following tester(s) are inactive and cannot be assigned: ${inactiveTesterNames}`
+    );
+  }
+
   // Remove testers that are already assigned
   const newTesters =
     testerDocuments.filter(
@@ -694,8 +717,9 @@ export async function assignTestersToSprint({
     testerRequired
   ) {
     throw new Error(
-      `You can assign only ${testerRequired -
-      currentAssignedCount
+      `You can assign only ${
+        testerRequired -
+        currentAssignedCount
       } more tester(s) to this Sprint.`
     );
   }
@@ -744,7 +768,8 @@ export async function assignTestersToSprint({
 
         tested: false,
         testedAt: null,
-        testIncomplete: false,       
+        testIncomplete: false,
+
         proofUrl: null,
         proofSubmittedAt: null,
 
