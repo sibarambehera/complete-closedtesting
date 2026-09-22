@@ -61,10 +61,7 @@ function Sidebar() {
           <span>Testing Sprints</span>
         </NavLink>
 
-        <a href="#" className="sidebar-link">
-          <Users size={20} />
-          <span>Testers</span>
-        </a>
+        
 
         <a href="#" className="sidebar-link">
           <Wallet size={20} />

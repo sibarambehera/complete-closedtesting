@@ -5945,3 +5945,16 @@ a {
 .admin-tester-row.inactive:hover {
     background: #fafafa;
 }
+
+.primary-button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.primary-button:disabled:hover {
+    opacity: 0.55;
+}
+.primary-button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}

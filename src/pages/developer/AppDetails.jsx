@@ -8,7 +8,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useAuth } from "../../context/AuthContext";
-import { getDeveloperApp } from "../../services/AppService";
+import { getDeveloperApp, getDeveloperTestingSprints } from "../../services/AppService";
 
 function AppDetails() {
   const navigate = useNavigate();
@@ -18,6 +18,8 @@ function AppDetails() {
   const [app, setApp] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [hasActiveSprint, setHasActiveSprint] =
+    useState(false);
 
   useEffect(() => {
     const loadApp = async () => {
@@ -36,6 +38,22 @@ function AppDetails() {
         );
 
         setApp(result);
+        const sprintData =
+          await getDeveloperTestingSprints(
+            user.uid
+          );
+
+        const activeSprintExists =
+          sprintData.some(
+            (sprint) =>
+              sprint.appId === appId &&
+              (sprint.status || "")
+                .toLowerCase() === "active"
+          );
+
+        setHasActiveSprint(
+          activeSprintExists
+        );
       } catch (err) {
         console.error("Failed to load app:", err);
 
@@ -109,6 +127,12 @@ function AppDetails() {
             navigate(
               `/developer/apps/${app.appId}/testing-sprint/create`
             )
+          }
+          disabled={hasActiveSprint}
+          title={
+            hasActiveSprint
+              ? "You already have an active Testing Sprint for this app."
+              : "Create Testing Sprint"
           }
         >
           <Plus size={18} />

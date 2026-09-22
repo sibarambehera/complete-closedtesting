@@ -29,11 +29,15 @@ function Apps() {
         setLoading(true);
         setError("");
 
-        const result = await getDeveloperApps(user.uid);
+        const result =
+          await getDeveloperApps(user.uid);
 
         setApps(result);
       } catch (err) {
-        console.error("Failed to load apps:", err);
+        console.error(
+          "Failed to load apps:",
+          err
+        );
 
         setError(
           "Failed to load your apps. Please try again."
@@ -46,10 +50,18 @@ function Apps() {
     loadApps();
   }, [user?.uid]);
 
+  // Developer can have only one active app
+  const hasActiveApp = apps.some(
+    (app) =>
+      (app.status || "")
+        .toLowerCase() === "active"
+  );
+  
   return (
     <div className="dashboard-page">
 
       <div className="page-header">
+
         <div>
           <h1>My Apps</h1>
 
@@ -60,13 +72,26 @@ function Apps() {
 
         <button
           type="button"
-          className="primary-button"
-          onClick={() => navigate("/developer/apps/add")}
+          className={`primary-button ${hasActiveApp
+            ? "button-disabled"
+            : ""
+            }`}
+          onClick={() =>
+            navigate("/developer/apps/add")
+          }
+          disabled={hasActiveApp}
+          title={
+            hasActiveApp
+              ? "You already have an active app."
+              : "Add Android App"
+          }
         >
           <Plus size={18} />
           Add Android App
         </button>
+
       </div>
+
 
       {/* Loading */}
 
@@ -75,6 +100,7 @@ function Apps() {
           Loading your apps...
         </div>
       )}
+
 
       {/* Error */}
 
@@ -86,13 +112,16 @@ function Apps() {
         </div>
       )}
 
+
       {/* No Apps */}
 
       {!loading &&
         !error &&
         apps.length === 0 && (
           <div className="form-card">
+
             <div className="form-section-title">
+
               <Smartphone size={20} />
 
               <div>
@@ -102,20 +131,25 @@ function Apps() {
                   Add your first Android application to create a Testing Sprint.
                 </p>
               </div>
+
             </div>
 
             <button
               type="button"
               className="primary-button"
               onClick={() =>
-                navigate("/developer/apps/add")
+                navigate(
+                  "/developer/apps/add"
+                )
               }
             >
               <Plus size={18} />
               Add Android App
             </button>
+
           </div>
         )}
+
 
       {/* Apps */}
 
@@ -133,6 +167,7 @@ function Apps() {
                 <div className="app-card-header">
 
                   <div className="app-icon">
+
                     {app.iconUrl ? (
                       <img
                         src={app.iconUrl}
@@ -140,15 +175,20 @@ function Apps() {
                         className="app-icon-image"
                       />
                     ) : (
-                      <Smartphone size={28} />
+                      <Smartphone
+                        size={28}
+                      />
                     )}
+
                   </div>
 
                   <button
                     type="button"
                     className="more-button"
                   >
-                    <MoreVertical size={20} />
+                    <MoreVertical
+                      size={20}
+                    />
                   </button>
 
                 </div>
@@ -164,7 +204,9 @@ function Apps() {
                 <div className="app-stats">
 
                   <div>
-                    <span>Testing Sprints</span>
+                    <span>
+                      Testing Sprints
+                    </span>
 
                     <strong>
                       0
@@ -172,17 +214,22 @@ function Apps() {
                   </div>
 
                   <div>
-                    <span>Status</span>
+                    <span>
+                      Status
+                    </span>
 
                     <strong
                       className={
-                        app.status === "active"
+                        app.status ===
+                          "active"
                           ? "status-active"
                           : "status-completed"
                       }
                     >
                       {app.status
-                        ? app.status.charAt(0).toUpperCase() +
+                        ? app.status
+                          .charAt(0)
+                          .toUpperCase() +
                         app.status.slice(1)
                         : "Active"}
                     </strong>
@@ -194,7 +241,9 @@ function Apps() {
                   type="button"
                   className="secondary-button"
                   onClick={() =>
-                    navigate(`/developer/apps/${app.appId}`)
+                    navigate(
+                      `/developer/apps/${app.appId}`
+                    )
                   }
                 >
                   <Eye size={17} />

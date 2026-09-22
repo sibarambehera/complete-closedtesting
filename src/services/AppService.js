@@ -23,21 +23,63 @@ export async function createDeveloperApp({
   iconStoragePath,
 }) {
   if (!developerUid) {
-    throw new Error("Developer UID is required.");
+    throw new Error(
+      "Developer UID is required."
+    );
   }
 
+  // Check whether developer already has an active app
+  const activeAppQuery = query(
+    collection(db, "DeveloperApps"),
+    where(
+      "developerUid",
+      "==",
+      developerUid
+    ),
+    where(
+      "status",
+      "==",
+      "active"
+    )
+  );
+
+  const activeAppSnapshot =
+    await getDocs(activeAppQuery);
+
+  if (!activeAppSnapshot.empty) {
+    throw new Error(
+      "You already have an active app. Only one active app is allowed at a time."
+    );
+  }
+
+  // Create app
   const appRef = await addDoc(
     collection(db, "DeveloperApps"),
     {
       developerUid,
-      appName: appName.trim(),
-      packageName: packageName.trim(),
-      playStoreUrl: playStoreUrl.trim(),
-      description: description.trim(),
-      iconUrl: iconUrl || "",
-      iconStoragePath: iconStoragePath || "",
+
+      appName:
+        appName.trim(),
+
+      packageName:
+        packageName.trim(),
+
+      playStoreUrl:
+        playStoreUrl.trim(),
+
+      description:
+        description.trim(),
+
+      iconUrl:
+        iconUrl || "",
+
+      iconStoragePath:
+        iconStoragePath || "",
+
       status: "active",
-      createdAt: serverTimestamp(),
+
+      createdAt:
+        serverTimestamp(),
     }
   );
 
@@ -296,44 +338,106 @@ export async function createTestingSprint({
   paymentId,
 }) {
   if (!developerUid) {
-    throw new Error("Developer UID is required.");
+    throw new Error(
+      "Developer UID is required."
+    );
   }
 
   if (!appId) {
-    throw new Error("App ID is required.");
+    throw new Error(
+      "App ID is required."
+    );
   }
 
   if (!paymentId) {
-    throw new Error("Payment ID is required.");
+    throw new Error(
+      "Payment ID is required."
+    );
   }
 
-  const sprintRef = await addDoc(
-    collection(db, "TestingSprints"),
-    {
-      developerUid,
-      appId,
+  // Check for an existing active Testing Sprint
+  // for this developer and this app.
+  const existingSprintQuery =
+    query(
+      collection(
+        db,
+        "TestingSprints"
+      ),
+      where(
+        "developerUid",
+        "==",
+        developerUid
+      )
+    );
 
-      durationDays: Number(durationDays),
-      testerRequired: Number(testerRequired),
+  const existingSprintSnapshot =
+    await getDocs(
+      existingSprintQuery
+    );
 
-      testerPayoutPerTester: 100,
-      platformCharge: 200,
+  const activeSprintExists =
+    existingSprintSnapshot.docs.some(
+      (sprintDoc) => {
+        const sprint =
+          sprintDoc.data();
 
-      platformPaymentStatus: "paid",
+        return (
+          sprint.appId === appId &&
+          (sprint.status || "")
+            .toLowerCase() ===
+            "active"
+        );
+      }
+    );
 
-      testingGoal: testingGoal.trim(),
-      instructions: instructions.trim(),
+  if (activeSprintExists) {
+    throw new Error(
+      "You already have an active Testing Sprint for this app."
+    );
+  }
 
-      status: "active",
+  // Create Testing Sprint
+  const sprintRef =
+    await addDoc(
+      collection(
+        db,
+        "TestingSprints"
+      ),
+      {
+        developerUid,
+        appId,
 
-      paymentId,
+        durationDays:
+          Number(durationDays),
 
-      createdAt: serverTimestamp(),
-    }
-  );
+        testerRequired:
+          Number(testerRequired),
+
+        testerPayoutPerTester: 100,
+
+        platformCharge: 200,
+
+        platformPaymentStatus:
+          "paid",
+
+        testingGoal:
+          testingGoal.trim(),
+
+        instructions:
+          instructions.trim(),
+
+        status: "active",
+
+        paymentId,
+
+        createdAt:
+          serverTimestamp(),
+      }
+    );
 
   return {
-    sprintId: sprintRef.id,
+    sprintId:
+      sprintRef.id,
   };
 }
 
