@@ -130,3 +130,53 @@ export async function uploadPaymentProof(
         fileName,
     };
 }
+
+export async function uploadTesterUpiQr(
+    file,
+    testerUid
+) {
+    if (!file) {
+        throw new Error("UPI QR image is required.");
+    }
+
+    if (!testerUid) {
+        throw new Error("Tester UID is required.");
+    }
+
+    if (!file.type.startsWith("image/")) {
+        throw new Error(
+            "Please select an image file."
+        );
+    }
+
+    if (file.size >= 5 * 1024 * 1024) {
+        throw new Error(
+            "UPI QR image must be smaller than 5 MB."
+        );
+    }
+
+    const fileName =
+        `upi-qr-${Date.now()}-${file.name}`;
+
+    const storagePath =
+        `tester-upi-qr/${testerUid}/${fileName}`;
+
+    const storageRef =
+        ref(storage, storagePath);
+
+    await uploadBytes(
+        storageRef,
+        file
+    );
+
+    const downloadUrl =
+        await getDownloadURL(
+            storageRef
+        );
+
+    return {
+        downloadUrl,
+        storagePath,
+        fileName,
+    };
+}

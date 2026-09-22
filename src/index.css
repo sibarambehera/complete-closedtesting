@@ -6483,3 +6483,135 @@ a {
     }
 
 }
+
+/* =========================================================
+   TESTER PROFILE - UPI QR
+========================================================= */
+
+.profile-upi-section {
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid #eaecf0;
+}
+
+.profile-upi-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.profile-upi-header h3 {
+    margin: 0;
+    font-size: 17px;
+    color: #101828;
+}
+
+.profile-upi-header p {
+    margin: 5px 0 0;
+    font-size: 13px;
+    color: #667085;
+}
+
+.profile-upi-header > svg {
+    color: #1976f3;
+    flex-shrink: 0;
+}
+
+.profile-upi-empty {
+    border: 1px dashed #d0d5dd;
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    background: #f9fafb;
+}
+
+.profile-upi-empty > svg {
+    color: #98a2b3;
+    margin-bottom: 10px;
+}
+
+.profile-upi-empty h4 {
+    margin: 0;
+    font-size: 15px;
+    color: #101828;
+}
+
+.profile-upi-empty p {
+    margin: 6px auto 18px;
+    max-width: 430px;
+    font-size: 13px;
+    color: #667085;
+}
+
+.profile-upi-preview {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 20px;
+    border: 1px solid #eaecf0;
+    border-radius: 12px;
+    background: #ffffff;
+}
+
+.profile-upi-preview img {
+    width: 180px;
+    height: 180px;
+    object-fit: contain;
+    border: 1px solid #eaecf0;
+    border-radius: 10px;
+    background: #ffffff;
+    padding: 8px;
+    flex-shrink: 0;
+}
+
+.profile-upi-preview strong {
+    display: block;
+    font-size: 15px;
+    color: #027a48;
+}
+
+.profile-upi-preview p {
+    margin: 6px 0 16px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #667085;
+}
+
+.profile-upload-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 14px;
+    border-radius: 8px;
+    background: #1976f3;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.profile-upload-button:hover {
+    opacity: 0.9;
+}
+
+.profile-upload-button:has(input:disabled) {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 650px) {
+
+    .profile-upi-preview {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .profile-upi-preview img {
+        width: 160px;
+        height: 160px;
+    }
+
+}

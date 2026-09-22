@@ -9,7 +9,9 @@ import {
   serverTimestamp,
   getDocs,
   query,
-  where
+  where,
+   doc,
+    updateDoc
 } from "firebase/firestore";
 
 import { auth, db } from "../firebaseconfig";
@@ -91,4 +93,45 @@ export async function loginUser({
     employeeId: employeeDoc.id,
     ...employeeDoc.data()
   };
+}
+
+export async function updateTesterUpiQr({
+    employeeId,
+    upiQrCodeUrl,
+    upiQrCodeStoragePath
+}) {
+    if (!employeeId) {
+        throw new Error(
+            "Tester employee ID is required."
+        );
+    }
+
+    if (!upiQrCodeUrl) {
+        throw new Error(
+            "UPI QR code URL is required."
+        );
+    }
+
+    const testerRef =
+        doc(
+            db,
+            "Employee",
+            employeeId
+        );
+
+    await updateDoc(
+        testerRef,
+        {
+            upiQrCodeUrl,
+            upiQrCodeStoragePath:
+                upiQrCodeStoragePath || ""
+        }
+    );
+
+    return {
+        employeeId,
+        upiQrCodeUrl,
+        upiQrCodeStoragePath:
+            upiQrCodeStoragePath || ""
+    };
 }
