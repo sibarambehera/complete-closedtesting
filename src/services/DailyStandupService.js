@@ -493,3 +493,102 @@ export async function markDailyActivityPaid({
             paymentProofUrl,
     });
 }
+export async function finalizeSprintTesterStatus(sprintTesterId) {
+    if (!sprintTesterId) {
+        throw new Error("Sprint Tester ID is required.");
+    }
+
+    const dailyStandupRef = doc(
+        db,
+        "DailyStandup",
+        sprintTesterId
+    );
+
+    const dailyStandupSnapshot = await getDoc(dailyStandupRef);
+
+    if (!dailyStandupSnapshot.exists()) {
+        throw new Error("DailyStandup record not found.");
+    }
+
+    const dailyStandup = dailyStandupSnapshot.data();
+
+    const activities = dailyStandup.activities || {};
+
+    const activityList = Object.values(activities);
+
+    if (activityList.length === 0) {
+        return;
+    }
+
+    const allDaysTested = activityList.every(
+        (activity) => activity.tested === true
+    );
+
+    /*
+     * If every required testing day has been completed,
+     * mark the overall SprintTester as tested.
+     */
+    if (allDaysTested) {
+        const sprintTesterRef = doc(
+            db,
+            "SprintTesters",
+            sprintTesterId
+        );
+
+        await updateDoc(sprintTesterRef, {
+            tested: true,
+            testedAt: serverTimestamp(),
+            testIncomplete: false,
+        });
+
+        return;
+    }
+
+    /*
+     * Find the final testing day.
+     */
+    const finalActivity = activityList.reduce(
+        (latest, activity) => {
+            if (!latest) return activity;
+
+            return activity.activityDate > latest.activityDate
+                ? activity
+                : latest;
+        },
+        null
+    );
+
+    if (!finalActivity?.activityDate) {
+        return;
+    }
+
+    /*
+     * Use date-only comparison.
+     * This avoids time-zone/time-of-day problems.
+     */
+    const today = new Date();
+
+    const todayDate =
+        `${today.getFullYear()}-${String(
+            today.getMonth() + 1
+        ).padStart(2, "0")}-${String(
+            today.getDate()
+        ).padStart(2, "0")}`;
+
+    /*
+     * Sprint is incomplete only after the final
+     * testing date has passed.
+     */
+    if (todayDate > finalActivity.activityDate) {
+        const sprintTesterRef = doc(
+            db,
+            "SprintTesters",
+            sprintTesterId
+        );
+
+        await updateDoc(sprintTesterRef, {
+            tested: false,
+            testIncomplete: true,
+        });
+    }
+}

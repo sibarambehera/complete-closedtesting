@@ -7,6 +7,7 @@ import {
     getDailyStandups,
     markDailyActivityTested,
     markDailyActivityPaid,
+    finalizeSprintTesterStatus,
 } from "../../services/DailyStandupService";
 
 function DeveloperDailyStandupModal({
@@ -89,7 +90,9 @@ function DeveloperDailyStandupModal({
                 dayNumber: daily.dayNumber,
                 developerUid,
             });
-
+            await finalizeSprintTesterStatus(
+                sprintTesterId
+            );
             setActivities((currentActivities) =>
                 currentActivities.map((activity) =>
                     activity.dayNumber ===

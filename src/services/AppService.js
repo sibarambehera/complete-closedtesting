@@ -65,30 +65,30 @@ export async function getDeveloperApps(developerUid) {
 }
 
 export async function getAdminApps() {
-    const appsQuery = query(
-        collection(db, "DeveloperApps")
-    );
+  const appsQuery = query(
+    collection(db, "DeveloperApps")
+  );
 
-    const snapshot = await getDocs(appsQuery);
+  const snapshot = await getDocs(appsQuery);
 
-    return snapshot.docs.map((appDoc) => ({
-        appId: appDoc.id,
-        ...appDoc.data(),
-    }));
+  return snapshot.docs.map((appDoc) => ({
+    appId: appDoc.id,
+    ...appDoc.data(),
+  }));
 }
 
 export async function getAllAdminTesters() {
-    const testersQuery = query(
-        collection(db, "Employee"),
-        where("role", "==", "tester")
-    );
+  const testersQuery = query(
+    collection(db, "Employee"),
+    where("role", "==", "tester")
+  );
 
-    const snapshot = await getDocs(testersQuery);
+  const snapshot = await getDocs(testersQuery);
 
-    return snapshot.docs.map((testerDoc) => ({
-        testerId: testerDoc.id,
-        ...testerDoc.data(),
-    }));
+  return snapshot.docs.map((testerDoc) => ({
+    testerId: testerDoc.id,
+    ...testerDoc.data(),
+  }));
 }
 
 export async function getDeveloperApp(
@@ -424,364 +424,361 @@ export async function getAdminTesters(
 }
 
 export async function assignTestersToSprint({
-    sprintId,
-    testerIds,
+  sprintId,
+  testerIds,
 }) {
-    if (!sprintId) {
-        throw new Error(
-            "Testing Sprint ID is required."
-        );
-    }
+  if (!sprintId) {
+    throw new Error(
+      "Testing Sprint ID is required."
+    );
+  }
 
-    if (
-        !testerIds ||
-        testerIds.length === 0
-    ) {
-        throw new Error(
-            "Please select at least one tester."
-        );
-    }
+  if (
+    !testerIds ||
+    testerIds.length === 0
+  ) {
+    throw new Error(
+      "Please select at least one tester."
+    );
+  }
 
-    // Get Sprint
-    const sprintRef = doc(
-        db,
-        "TestingSprints",
-        sprintId
+  // Get Sprint
+  const sprintRef = doc(
+    db,
+    "TestingSprints",
+    sprintId
+  );
+
+  const sprintSnapshot =
+    await getDoc(sprintRef);
+
+  if (!sprintSnapshot.exists()) {
+    throw new Error(
+      "Testing Sprint not found."
+    );
+  }
+
+  const sprint =
+    sprintSnapshot.data();
+
+  // Get already assigned testers
+  const assignedQuery = query(
+    collection(db, "SprintTesters"),
+    where(
+      "sprintId",
+      "==",
+      sprintId
+    )
+  );
+
+  const assignedSnapshot =
+    await getDocs(assignedQuery);
+
+  const assignedTesterUids =
+    new Set(
+      assignedSnapshot.docs.map(
+        (testerDoc) =>
+          testerDoc.data().testerUid
+      )
     );
 
-    const sprintSnapshot =
-        await getDoc(sprintRef);
+  // Get selected Employee documents
+  const testerDocuments =
+    await Promise.all(
+      testerIds.map(async (testerId) => {
 
-    if (!sprintSnapshot.exists()) {
-        throw new Error(
-            "Testing Sprint not found."
+        const testerRef = doc(
+          db,
+          "Employee",
+          testerId
         );
-    }
 
-    const sprint =
-        sprintSnapshot.data();
+        const testerSnapshot =
+          await getDoc(
+            testerRef
+          );
 
-    // Get already assigned testers
-    const assignedQuery = query(
-        collection(db, "SprintTesters"),
-        where(
-            "sprintId",
-            "==",
-            sprintId
+        if (
+          !testerSnapshot.exists()
+        ) {
+          throw new Error(
+            `Tester ${testerId} was not found.`
+          );
+        }
+
+        return {
+          testerId,
+          ...testerSnapshot.data(),
+        };
+      })
+    );
+
+  // Remove testers that are already assigned
+  const newTesters =
+    testerDocuments.filter(
+      (tester) =>
+        tester.uid &&
+        !assignedTesterUids.has(
+          tester.uid
         )
     );
 
-    const assignedSnapshot =
-        await getDocs(assignedQuery);
+  if (newTesters.length === 0) {
+    throw new Error(
+      "All selected testers are already assigned to this Testing Sprint."
+    );
+  }
 
-    const assignedTesterUids =
-        new Set(
-            assignedSnapshot.docs.map(
-                (testerDoc) =>
-                    testerDoc.data().testerUid
-            )
-        );
+  // Check Sprint capacity
+  const currentAssignedCount =
+    assignedSnapshot.size;
 
-    // Get selected Employee documents
-    const testerDocuments =
-        await Promise.all(
-            testerIds.map(async (testerId) => {
+  const testerRequired =
+    Number(
+      sprint.testerRequired || 0
+    );
 
-                const testerRef = doc(
-                    db,
-                    "Employee",
-                    testerId
-                );
+  if (
+    currentAssignedCount +
+    newTesters.length >
+    testerRequired
+  ) {
+    throw new Error(
+      `You can assign only ${testerRequired -
+      currentAssignedCount
+      } more tester(s) to this Sprint.`
+    );
+  }
 
-                const testerSnapshot =
-                    await getDoc(
-                        testerRef
-                    );
+  // Create all assignments together
+  const batch = writeBatch(db);
 
-                if (
-                    !testerSnapshot.exists()
-                ) {
-                    throw new Error(
-                        `Tester ${testerId} was not found.`
-                    );
-                }
+  newTesters.forEach((tester) => {
 
-                return {
-                    testerId,
-                    ...testerSnapshot.data(),
-                };
-            })
-        );
+    const sprintTesterRef =
+      doc(
+        collection(
+          db,
+          "SprintTesters"
+        )
+      );
 
-    // Remove testers that are already assigned
-    const newTesters =
-        testerDocuments.filter(
-            (tester) =>
-                tester.uid &&
-                !assignedTesterUids.has(
-                    tester.uid
-                )
-        );
+    batch.set(
+      sprintTesterRef,
+      {
+        sprintId,
 
-    if (newTesters.length === 0) {
-        throw new Error(
-            "All selected testers are already assigned to this Testing Sprint."
-        );
-    }
+        testerUid:
+          tester.uid,
 
-    // Check Sprint capacity
-    const currentAssignedCount =
-        assignedSnapshot.size;
+        testerEmployeeId:
+          tester.testerId,
 
-    const testerRequired =
-        Number(
-            sprint.testerRequired || 0
-        );
+        testerName:
+          tester.name || "",
 
-    if (
-        currentAssignedCount +
-            newTesters.length >
-        testerRequired
-    ) {
-        throw new Error(
-            `You can assign only ${
-                testerRequired -
-                currentAssignedCount
-            } more tester(s) to this Sprint.`
-        );
-    }
+        testerEmail:
+          tester.email || "",
 
-    // Create all assignments together
-    const batch = writeBatch(db);
+        developerUid:
+          sprint.developerUid,
 
-    newTesters.forEach((tester) => {
+        appId:
+          sprint.appId,
 
-        const sprintTesterRef =
-            doc(
-                collection(
-                    db,
-                    "SprintTesters"
-                )
-            );
+        status: "assigned",
 
-        batch.set(
-            sprintTesterRef,
-            {
-                sprintId,
+        downloaded: false,
 
-                testerUid:
-                    tester.uid,
+        downloadedAt: null,
 
-                testerEmployeeId:
-                    tester.testerId,
+        tested: false,
+        testedAt: null,
+        testIncomplete: false,       
+        proofUrl: null,
+        proofSubmittedAt: null,
 
-                testerName:
-                    tester.name || "",
+        assignedAt:
+          serverTimestamp(),
+      }
+    );
+  });
 
-                testerEmail:
-                    tester.email || "",
+  await batch.commit();
 
-                developerUid:
-                    sprint.developerUid,
+  return {
+    assignedCount:
+      newTesters.length,
 
-                appId:
-                    sprint.appId,
-
-                status: "assigned",
-
-                downloaded: false,
-
-                downloadedAt: null,
-
-                tested: false,
-
-                testedAt: null,
-
-                proofUrl: null,
-
-                proofSubmittedAt: null,
-
-                assignedAt:
-                    serverTimestamp(),
-            }
-        );
-    });
-
-    await batch.commit();
-
-    return {
-        assignedCount:
-            newTesters.length,
-
-        totalAssigned:
-            currentAssignedCount +
-            newTesters.length,
-    };
+    totalAssigned:
+      currentAssignedCount +
+      newTesters.length,
+  };
 }
 
 export async function getSprintTesters(
-    sprintId
+  sprintId
 ) {
-    if (!sprintId) {
-        throw new Error(
-            "Testing Sprint ID is required."
-        );
-    }
-
-    const testersQuery = query(
-        collection(db, "SprintTesters"),
-        where(
-            "sprintId",
-            "==",
-            sprintId
-        )
+  if (!sprintId) {
+    throw new Error(
+      "Testing Sprint ID is required."
     );
+  }
 
-    const snapshot =
-        await getDocs(testersQuery);
+  const testersQuery = query(
+    collection(db, "SprintTesters"),
+    where(
+      "sprintId",
+      "==",
+      sprintId
+    )
+  );
 
-    return snapshot.docs.map(
-        (testerDoc) => ({
-            sprintTesterId:
-                testerDoc.id,
+  const snapshot =
+    await getDocs(testersQuery);
 
-            ...testerDoc.data(),
-        })
-    );
+  return snapshot.docs.map(
+    (testerDoc) => ({
+      sprintTesterId:
+        testerDoc.id,
+
+      ...testerDoc.data(),
+    })
+  );
 }
 
 export async function markTesterDownloaded(
-    sprintTesterId
+  sprintTesterId
 ) {
-    if (!sprintTesterId) {
-        throw new Error(
-            "Sprint Tester ID is required."
-        );
-    }
-
-    const testerRef = doc(
-        db,
-        "SprintTesters",
-        sprintTesterId
+  if (!sprintTesterId) {
+    throw new Error(
+      "Sprint Tester ID is required."
     );
+  }
 
-    await updateDoc(testerRef, {
-        downloaded: true,
-        downloadedAt: serverTimestamp(),
-    });
+  const testerRef = doc(
+    db,
+    "SprintTesters",
+    sprintTesterId
+  );
 
-    return {
-        success: true,
-        sprintTesterId,
-    };
+  await updateDoc(testerRef, {
+    downloaded: true,
+    downloadedAt: serverTimestamp(),
+  });
+
+  return {
+    success: true,
+    sprintTesterId,
+  };
 }
 
 export async function markTesterTested(
-    sprintTesterId
+  sprintTesterId
 ) {
-    if (!sprintTesterId) {
-        throw new Error(
-            "Sprint Tester ID is required."
-        );
-    }
-
-    const testerRef = doc(
-        db,
-        "SprintTesters",
-        sprintTesterId
+  if (!sprintTesterId) {
+    throw new Error(
+      "Sprint Tester ID is required."
     );
+  }
 
-    await updateDoc(testerRef, {
-        tested: true,
-        testedAt: serverTimestamp(),
-    });
+  const testerRef = doc(
+    db,
+    "SprintTesters",
+    sprintTesterId
+  );
 
-    return {
-        success: true,
-        sprintTesterId,
-    };
+  await updateDoc(testerRef, {
+    tested: true,
+    testedAt: serverTimestamp(),
+  });
+
+  return {
+    success: true,
+    sprintTesterId,
+  };
 }
 
 
 
 export async function getTesterAssignedSprints(
-    testerEmployeeId
+  testerEmployeeId
 ) {
-    if (!testerEmployeeId) {
-        throw new Error(
-            "Tester Employee ID is required."
+  if (!testerEmployeeId) {
+    throw new Error(
+      "Tester Employee ID is required."
+    );
+  }
+
+  const testersQuery = query(
+    collection(db, "SprintTesters"),
+    where(
+      "testerEmployeeId",
+      "==",
+      testerEmployeeId
+    )
+  );
+
+  const snapshot = await getDocs(testersQuery);
+
+  const assignments = await Promise.all(
+    snapshot.docs.map(async (testerDoc) => {
+      const testerData = testerDoc.data();
+
+      let sprintData = null;
+      let appData = null;
+
+      // Get Testing Sprint
+      if (testerData.sprintId) {
+        const sprintRef = doc(
+          db,
+          "TestingSprints",
+          testerData.sprintId
         );
-    }
 
-    const testersQuery = query(
-        collection(db, "SprintTesters"),
-        where(
-            "testerEmployeeId",
-            "==",
-            testerEmployeeId
-        )
-    );
+        const sprintSnapshot =
+          await getDoc(sprintRef);
 
-    const snapshot = await getDocs(testersQuery);
+        if (sprintSnapshot.exists()) {
+          sprintData = {
+            sprintId:
+              sprintSnapshot.id,
+            ...sprintSnapshot.data(),
+          };
+        }
+      }
 
-    const assignments = await Promise.all(
-        snapshot.docs.map(async (testerDoc) => {
-            const testerData = testerDoc.data();
+      // Get Developer App
+      if (sprintData?.appId) {
+        const appRef = doc(
+          db,
+          "DeveloperApps",
+          sprintData.appId
+        );
 
-            let sprintData = null;
-            let appData = null;
+        const appSnapshot =
+          await getDoc(appRef);
 
-            // Get Testing Sprint
-            if (testerData.sprintId) {
-                const sprintRef = doc(
-                    db,
-                    "TestingSprints",
-                    testerData.sprintId
-                );
+        if (appSnapshot.exists()) {
+          appData = {
+            appId:
+              appSnapshot.id,
+            ...appSnapshot.data(),
+          };
+        }
+      }
 
-                const sprintSnapshot =
-                    await getDoc(sprintRef);
+      return {
+        sprintTesterId: testerDoc.id,
 
-                if (sprintSnapshot.exists()) {
-                    sprintData = {
-                        sprintId:
-                            sprintSnapshot.id,
-                        ...sprintSnapshot.data(),
-                    };
-                }
-            }
+        ...testerData,
 
-            // Get Developer App
-            if (sprintData?.appId) {
-                const appRef = doc(
-                    db,
-                    "DeveloperApps",
-                    sprintData.appId
-                );
+        sprint: sprintData,
 
-                const appSnapshot =
-                    await getDoc(appRef);
+        app: appData,
+      };
+    })
+  );
 
-                if (appSnapshot.exists()) {
-                    appData = {
-                        appId:
-                            appSnapshot.id,
-                        ...appSnapshot.data(),
-                    };
-                }
-            }
-
-            return {
-                sprintTesterId: testerDoc.id,
-
-                ...testerData,
-
-                sprint: sprintData,
-
-                app: appData,
-            };
-        })
-    );
-
-    return assignments;
+  return assignments;
 }
