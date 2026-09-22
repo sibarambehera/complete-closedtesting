@@ -25,6 +25,7 @@ import TesterSprintDetails from "./pages/tester/TesterSprintDetails";
 import AdminApps from "./pages/admin/Apps";
 import AdminTesters from "./pages/admin/Testers";
 import AdminDevelopers from "./pages/admin/Developers";
+import CompletedTests from "./pages/tester/CompletedTests";
 
 function App() {
   return (
@@ -74,6 +75,16 @@ function App() {
               <ProtectedRoute allowedRole="tester">
                 <TesterLayout>
                   <TesterSprintDetails />
+                </TesterLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/tester/completed-tests"
+            element={
+              <ProtectedRoute allowedRole="tester">
+                <TesterLayout>
+                  <CompletedTests />
                 </TesterLayout>
               </ProtectedRoute>
             }

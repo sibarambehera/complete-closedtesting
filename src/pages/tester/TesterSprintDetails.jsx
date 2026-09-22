@@ -502,64 +502,7 @@ function TesterSprintDetails() {
                     </div>
 
 
-                    <div className="tester-daily-list">
-
-                        {dailyActivities.map(
-                            (daily) => (
-                                <div
-                                    key={daily.dayNumber}
-                                    className="tester-daily-item"
-                                >
-
-                                    <div>
-
-                                        <strong>
-                                            Day {daily.dayNumber}
-                                        </strong>
-
-                                        <span>
-                                            {daily.activityDate}
-                                        </span>
-
-                                    </div>
-
-
-                                    <div>
-
-                                        <strong>
-                                            ₹
-                                            {(
-                                                daily.payoutAmountPaise /
-                                                100
-                                            ).toFixed(2)}
-                                        </strong>
-
-                                        <span>
-                                            {daily.paymentStatus}
-                                        </span>
-
-                                    </div>
-
-
-                                    <div>
-
-                                        {daily.tested ? (
-                                            <span>
-                                                Tested
-                                            </span>
-                                        ) : (
-                                            <span>
-                                                Not Tested
-                                            </span>
-                                        )}
-
-                                    </div>
-
-                                </div>
-                            )
-                        )}
-
-                    </div>
+                  
 
                 </div>
 

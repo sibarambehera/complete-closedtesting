@@ -129,12 +129,9 @@ function TesterDashboard() {
             <div className="page-header">
 
                 <div>
-                    <h1>
-                        Tester Dashboard
-                    </h1>
-
+                  
                     <p>
-                        Track your assigned Testing
+                        - Track your assigned Testing
                         Sprints and testing progress.
                     </p>
                 </div>
