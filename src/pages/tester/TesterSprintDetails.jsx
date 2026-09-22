@@ -23,7 +23,7 @@ import {
     getDailyStandups,
     initializeDailyStandups,
 } from "../../services/DailyStandupService";
-import DailyStandupModal from "../../components/DailyStandupModal";
+import TesterDailyStandupModal from "../../components/daily-standup/TesterDailyStandupModal";
 
 
 function TesterSprintDetails() {
@@ -564,7 +564,7 @@ function TesterSprintDetails() {
                 </div>
 
             </div>
-            <DailyStandupModal
+            <TesterDailyStandupModal
                 isOpen={isDailyStandupOpen}
                 onClose={() => setIsDailyStandupOpen(false)}
                 dailyActivities={dailyActivities}

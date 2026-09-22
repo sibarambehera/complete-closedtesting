@@ -5690,3 +5690,13 @@ a {
     color: #b54708;
     font-weight: 600;
 }
+
+.tester-payment-status-paid {
+    color: #067647;
+    font-weight: 600;
+}
+
+.tester-payment-status-pending {
+    color: #b54708;
+    font-weight: 600;
+}

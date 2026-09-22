@@ -140,7 +140,8 @@ function DeveloperDailyStandupModal({
                 sprintTesterId,
                 dayNumber: daily.dayNumber,
                 developerUid,
-                paymentProofUrl: uploadResult.downloadUrl,
+                paymentProofUrl:
+                    uploadResult.downloadUrl,
             });
 
             setActivities((currentActivities) =>
@@ -156,6 +157,10 @@ function DeveloperDailyStandupModal({
                         }
                         : activity
                 )
+            );
+
+            alert(
+                "Payment proof uploaded successfully."
             );
 
         } catch (err) {
@@ -363,7 +368,9 @@ function DeveloperDailyStandupModal({
                                                         htmlFor={`payment-proof-${daily.dayNumber}`}
                                                         className="developer-daily-paid-button"
                                                     >
-                                                        ✓ Mark Paid
+                                                        {payingDay === daily.dayNumber
+                                                            ? "Uploading..."
+                                                            : "✓ Mark Paid"}
                                                     </label>
 
                                                 </div>
