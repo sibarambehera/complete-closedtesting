@@ -4,6 +4,10 @@ import {
     setDoc,
     updateDoc,
     serverTimestamp,
+    collection,
+    getDocs,
+    query,
+    where
 } from "firebase/firestore";
 
 import { db } from "../firebaseconfig";
@@ -223,7 +227,7 @@ export async function initializeDailyStandups({
         const payoutAmountPaise =
             dayNumber === totalDays
                 ? basePayoutPaise +
-                  remainderPaise
+                remainderPaise
                 : basePayoutPaise;
 
 
@@ -591,4 +595,72 @@ export async function finalizeSprintTesterStatus(sprintTesterId) {
             testIncomplete: true,
         });
     }
+}
+
+export async function getTesterUpiQr(
+    sprintTesterId
+) {
+    if (!sprintTesterId) {
+        throw new Error(
+            "Sprint Tester ID is required."
+        );
+    }
+
+    // Get SprintTester
+    const sprintTesterRef = doc(
+        db,
+        "SprintTesters",
+        sprintTesterId
+    );
+
+    const sprintTesterSnapshot =
+        await getDoc(sprintTesterRef);
+
+    if (!sprintTesterSnapshot.exists()) {
+        throw new Error(
+            "Sprint Tester record not found."
+        );
+    }
+
+    const sprintTester =
+        sprintTesterSnapshot.data();
+
+    const testerUid =
+        sprintTester.testerUid;
+
+    if (!testerUid) {
+        throw new Error(
+            "Tester UID not found."
+        );
+    }
+
+    // Get Tester Employee
+    const employeeQuery = query(
+        collection(db, "Employee"),
+        where(
+            "uid",
+            "==",
+            testerUid
+        )
+    );
+
+    const employeeSnapshot =
+        await getDocs(employeeQuery);
+
+    if (employeeSnapshot.empty) {
+        throw new Error(
+            "Tester profile not found."
+        );
+    }
+
+    const tester =
+        employeeSnapshot.docs[0].data();
+
+    return {
+        testerUid,
+        testerName:
+            tester.name || "Tester",
+        upiQrCodeUrl:
+            tester.upiQrCodeUrl || ""
+    };
 }

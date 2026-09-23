@@ -435,7 +435,50 @@ function TesterSprintDetails() {
                             <p>
                                 {app.packageName}
                             </p>
+                            {app.playStoreUrl && (
+                                <div className="tester-app-playstore">
 
+                                    <label>
+                                        Google Play App URL
+                                    </label>
+
+                                    <div className="tester-app-url-row">
+
+                                        <input
+                                            type="text"
+                                            value={app.playStoreUrl}
+                                            readOnly
+                                        />
+
+                                        <button
+                                            type="button"
+                                            onClick={async () => {
+                                                try {
+                                                    await navigator.clipboard.writeText(
+                                                        app.playStoreUrl
+                                                    );
+
+                                                    alert(
+                                                        "App URL copied successfully."
+                                                    );
+
+                                                } catch (error) {
+
+                                                    console.error(
+                                                        "Failed to copy app URL:",
+                                                        error
+                                                    );
+
+                                                }
+                                            }}
+                                        >
+                                            Copy
+                                        </button>
+
+                                    </div>
+
+                                </div>
+                            )}
                         </div>
 
                     </div>
@@ -502,7 +545,7 @@ function TesterSprintDetails() {
                     </div>
 
 
-                  
+
 
                 </div>
 
