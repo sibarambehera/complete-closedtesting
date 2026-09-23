@@ -16,7 +16,7 @@ function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -35,6 +35,9 @@ function Login() {
     e.preventDefault();
 
     try {
+
+      setLoading(true);
+
       const result = await loginUser({
         email: formData.email,
         password: formData.password,
@@ -42,10 +45,8 @@ function Login() {
 
       console.log("Login successful:", result);
 
-      // Store logged-in employee
       login(result);
 
-      // Redirect based on role
       if (result.role === "developer") {
         navigate("/developer/dashboard");
       } else if (result.role === "tester") {
@@ -57,6 +58,7 @@ function Login() {
       }
 
     } catch (error) {
+
       console.error("Login error:", error);
 
       if (
@@ -65,25 +67,49 @@ function Login() {
         error.code === "auth/wrong-password"
       ) {
         alert("Invalid email or password.");
+
       } else if (error.code === "auth/too-many-requests") {
+
         alert(
           "Too many login attempts. Please try again later."
         );
+
       } else if (
         error.message === "Employee profile not found."
       ) {
+
         alert(
           "Employee profile not found. Please contact administrator."
         );
+
       } else {
+
         alert("Login failed. Please try again.");
       }
+
+    } finally {
+
+      setLoading(false);
     }
   };
 
   return (
     <div className="register-page">
+      {loading && (
+        <div className="register-loading-overlay">
+          <div className="register-loading-box">
 
+            <div className="register-spinner"></div>
+
+            <strong>Please wait...</strong>
+
+            <span>
+              Signing you in
+            </span>
+
+          </div>
+        </div>
+      )}
       {/* LEFT SIDE */}
 
       <div className="register-left">
@@ -299,8 +325,9 @@ function Login() {
             <button
               type="submit"
               className="register-submit"
+              disabled={loading}
             >
-              Sign In
+              {loading ? "Please wait..." : "Sign In"}
             </button>
 
           </form>

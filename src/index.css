@@ -6615,3 +6615,72 @@ a {
     }
 
 }
+
+/* ==========================================
+   REGISTER LOADING
+========================================== */
+
+.register-loading-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(3px);
+}
+
+.register-loading-box {
+    min-width: 220px;
+    padding: 28px 32px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    background: #ffffff;
+    border: 1px solid #eaecf0;
+    border-radius: 14px;
+
+    box-shadow: 0 10px 30px rgba(16, 24, 40, 0.12);
+
+    text-align: center;
+}
+
+.register-loading-box strong {
+    font-size: 16px;
+    color: #101828;
+}
+
+.register-loading-box span {
+    font-size: 13px;
+    color: #667085;
+}
+
+.register-spinner {
+    width: 30px;
+    height: 30px;
+
+    margin-bottom: 6px;
+
+    border: 3px solid #dbeafe;
+    border-top-color: #1976f3;
+    border-radius: 50%;
+
+    animation: register-spin 0.8s linear infinite;
+}
+
+@keyframes register-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.register-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

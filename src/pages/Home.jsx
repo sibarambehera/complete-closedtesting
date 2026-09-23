@@ -22,9 +22,9 @@ function Home() {
 
   const apps = [
     {
-      initial: "F",
-      name: "FitTrack",
-      category: "Health & Fitness",
+      initial: "C",
+      name: "CRM Stock & Sale",
+      category: "Shop Billing Report",
       reward: "₹100/tester",
       days: "14 days",
       testers: "8/12 joined",
@@ -32,9 +32,9 @@ function Home() {
       status: "Recruiting",
     },
     {
-      initial: "S",
-      name: "SnapBudget",
-      category: "Finance",
+      initial: "M",
+      name: "MI Attendance",
+      category: "HR",
       reward: "₹90/tester",
       days: "14 days",
       testers: "10/12 joined",
@@ -42,9 +42,9 @@ function Home() {
       status: "Recruiting",
     },
     {
-      initial: "P",
-      name: "PixelChat",
-      category: "Communication",
+      initial: "G",
+      name: "Ghar Ka Khana",
+      category: "Food",
       reward: "₹110/tester",
       days: "14 days",
       testers: "12 testers",
@@ -52,8 +52,8 @@ function Home() {
       status: "Active",
     },
     {
-      initial: "G",
-      name: "GreenCart",
+      initial: "M",
+      name: "MR Barcode",
       category: "Shopping",
       reward: "₹100/tester",
       days: "14 days",
@@ -65,26 +65,26 @@ function Home() {
 
   const testers = [
     {
+      initial: "A",
+      name: "Anjarul",
+      devices: "Android",
+      activity: "Daily active",
+    },
+    {
       initial: "R",
-      name: "Rahul",
+      name: "Ranjan",
       devices: "Android",
       activity: "Daily active",
     },
     {
       initial: "A",
-      name: "Aman",
+      name: "Ajita",
       devices: "Android",
       activity: "Daily active",
     },
     {
-      initial: "P",
-      name: "Priya",
-      devices: "Android",
-      activity: "Daily active",
-    },
-    {
-      initial: "S",
-      name: "Sanjay",
+      initial: "J",
+      name: "Jhili",
       devices: "Android",
       activity: "Daily active",
     },
@@ -112,14 +112,14 @@ function Home() {
           <nav className="main-nav">
 
             <a href="#apps">Browse Apps</a>
-
+            <a href="#daily">Daily Standup</a>
             <a href="#testers">Testers</a>
 
             <a href="#features">Features</a>
 
             <a href="#how-it-works">How It Works</a>
 
-            <a href="#pricing">Pricing</a>
+
 
           </nav>
 
@@ -160,9 +160,9 @@ function Home() {
           </div>
 
           <h1>
-            <span className="hero-line">Connect your app with</span>
-            <span className="hero-line blue">Complete ClosedTesting.</span>
-            <span className="hero-line">14-day Testing Sprint</span>
+            <span className="hero-line">Google Play Task:</span>
+            <span className="hero-line blue">Complete ClosedTesting</span>
+            <span className="hero-line">With 14-day Testing Sprint</span>
           </h1>
           <p className="hero-description">
             Launch structured 14-day Testing Sprints, connect with
@@ -203,7 +203,7 @@ function Home() {
           STATS
       ====================================================== */}
 
-      <section className="stats-section">
+      <section id="daily" className="stats-section">
 
         <div className="home-container stats-grid">
 
@@ -231,6 +231,26 @@ function Home() {
 
       </section>
 
+      <div className="daily-standup-modal-body" style={{
+        width: "1100px",
+        maxWidth: "100%",
+        margin: "0 auto",
+        boxSizing: "border-box"
+      }}>
+
+        <div className="home-container">
+
+          <div className="section-heading-row">
+
+            <div>
+
+              <h2>
+                Daily Standup Activity
+              </h2>
+            </div>
+          </div>
+        </div>
+        <div className="tester-daily-list"><div className="tester-daily-item"><div><strong>Day 1</strong><span>2026-09-20</span></div><div><strong>₹7.14</strong><span className="tester-payment-status-paid">✓ Paid</span></div><div className="tester-daily-proof-section"><a href="#daily" rel="noopener noreferrer" className="tester-proof-link">View Testing Proof</a><div><span className="daily-status-tested">✓ Tested</span></div><a href="#daily" rel="noopener noreferrer" className="tester-proof-link">View Payment Proof</a></div></div><div className="tester-daily-item"><div><strong>Day 2</strong><span>2026-09-21</span></div><div><strong>₹7.14</strong><span className="tester-payment-status-paid">✓ Paid</span></div><div className="tester-daily-proof-section"><a href="#daily" rel="noopener noreferrer" className="tester-proof-link">View Testing Proof</a><div><span className="daily-status-tested">✓ Tested</span></div><a href="#daily" rel="noopener noreferrer" className="tester-proof-link">View Payment Proof</a></div></div><div className="tester-daily-item"><div><strong>Day 3</strong><span>2026-09-22</span></div><div><strong>₹7.14</strong><span className="tester-payment-status-paid">✓ Paid</span></div><div className="tester-daily-proof-section"><a href="#daily" rel="noopener noreferrer" className="tester-proof-link">View Testing Proof</a><div><span className="daily-status-tested">✓ Tested</span></div><a href="#daily" rel="noopener noreferrer" className="tester-proof-link">View Payment Proof</a></div></div><div className="tester-daily-item"><div><strong>Day 4</strong><span>2026-09-23</span></div><div><strong>₹7.14</strong><span className="tester-payment-status-pending">Payment Pending</span></div><div className="tester-daily-proof-section"><span className="tester-proof-not-submitted">Proof Not Submitted</span><div><span>Not Tested</span></div></div></div><div className="tester-daily-item"><div><strong>Day 5</strong><span>2026-09-24</span></div><div><strong>₹7.14</strong><span className="tester-payment-status-pending">Payment Pending</span></div><div className="tester-daily-proof-section"><span className="tester-proof-not-submitted">Proof Not Submitted</span><div><span>Not Tested</span></div></div></div><div className="tester-daily-item"><div><strong>Day 6</strong><span>2026-09-25</span></div><div><strong>₹7.14</strong><span className="tester-payment-status-pending">Payment Pending</span></div><div className="tester-daily-proof-section"><span className="tester-proof-not-submitted">Proof Not Submitted</span><div><span>Not Tested</span></div></div></div><div className="tester-daily-item"><div><strong>Day 7</strong><span>2026-09-26</span></div><div><strong>₹7.14</strong><span className="tester-payment-status-pending">Payment Pending</span></div><div className="tester-daily-proof-section"><span className="tester-proof-not-submitted">Proof Not Submitted</span><div><span>Not Tested</span></div></div></div><div className="tester-daily-item"><div><strong>Day 8</strong><span>2026-09-27</span></div><div><strong>₹7.14</strong><span className="tester-payment-status-pending">Payment Pending</span></div><div className="tester-daily-proof-section"><span className="tester-proof-not-submitted">Proof Not Submitted</span><div><span>Not Tested</span></div></div></div><div className="tester-daily-item"><div><strong>Day 9</strong><span>2026-09-28</span></div><div><strong>₹7.14</strong><span className="tester-payment-status-pending">Payment Pending</span></div><div className="tester-daily-proof-section"><span className="tester-proof-not-submitted">Proof Not Submitted</span><div><span>Not Tested</span></div></div></div><div className="tester-daily-item"><div><strong>Day 10</strong><span>2026-09-29</span></div><div><strong>₹7.14</strong><span className="tester-payment-status-pending">Payment Pending</span></div><div className="tester-daily-proof-section"><span className="tester-proof-not-submitted">Proof Not Submitted</span><div><span>Not Tested</span></div></div></div><div className="tester-daily-item"><div><strong>Day 11</strong><span>2026-09-30</span></div><div><strong>₹7.14</strong><span className="tester-payment-status-pending">Payment Pending</span></div><div className="tester-daily-proof-section"><span className="tester-proof-not-submitted">Proof Not Submitted</span><div><span>Not Tested</span></div></div></div><div className="tester-daily-item"><div><strong>Day 12</strong><span>2026-10-01</span></div><div><strong>₹7.14</strong><span className="tester-payment-status-pending">Payment Pending</span></div><div className="tester-daily-proof-section"><span className="tester-proof-not-submitted">Proof Not Submitted</span><div><span>Not Tested</span></div></div></div><div className="tester-daily-item"><div><strong>Day 13</strong><span>2026-10-02</span></div><div><strong>₹7.14</strong><span className="tester-payment-status-pending">Payment Pending</span></div><div className="tester-daily-proof-section"><span className="tester-proof-not-submitted">Proof Not Submitted</span><div><span>Not Tested</span></div></div></div><div className="tester-daily-item"><div><strong>Day 14</strong><span>2026-10-03</span></div><div><strong>₹7.18</strong><span className="tester-payment-status-pending">Payment Pending</span></div><div className="tester-daily-proof-section"><span className="tester-proof-not-submitted">Proof Not Submitted</span><div><span>Not Tested</span></div></div></div></div></div>
 
       {/* =====================================================
           APPS LOOKING FOR TESTERS
@@ -488,7 +508,7 @@ function Home() {
           <Rocket size={42} />
 
           <h2>
-            Ready to start your testing Testing Sprint?
+            Ready to start your Testing Sprint?
           </h2>
 
           <p>
@@ -779,7 +799,7 @@ function Home() {
             </h2>
 
             <p>
-              Developers decide the tester reward.
+              Developers will pay to tester directly.
               We show the complete cost before payment.
             </p>
 
@@ -788,60 +808,6 @@ function Home() {
 
           <div className="pricing-grid">
 
-            <div className="pricing-card">
-
-              <span className="pricing-label">
-                TESTER REWARD
-              </span>
-
-              <h3>
-                You decide
-              </h3>
-
-              <p className="pricing-description">
-                Set the amount a tester receives for
-                completing your Testing Sprint.
-              </p>
-
-              <div className="pricing-example">
-                ₹100
-                <span>/ tester</span>
-              </div>
-
-              <ul>
-
-                <li>
-                  <CheckCircle2 size={17} />
-                  Choose your tester reward
-                </li>
-
-                <li>
-                  <CheckCircle2 size={17} />
-                  Choose number of testers
-                </li>
-
-                <li>
-                  <CheckCircle2 size={17} />
-                  Define testing duration
-                </li>
-
-                <li>
-                  <CheckCircle2 size={17} />
-                  View total before payment
-                </li>
-
-              </ul>
-
-              <button
-                className="pricing-button"
-                onClick={() => navigate("/register")}
-              >
-                Create Testing Sprint
-              </button>
-
-            </div>
-
-
             <div className="pricing-card pricing-featured">
 
               <span className="popular-label">
@@ -849,7 +815,7 @@ function Home() {
               </span>
 
               <h3>
-                One clear dashboard
+                Platform fee : Rs 200 /- only
               </h3>
 
               <p className="pricing-description">
@@ -894,6 +860,58 @@ function Home() {
               </button>
 
             </div>
+
+            <div className="pricing-card">
+
+              <span className="pricing-label">
+                TESTER REWARD
+              </span>
+
+              <h3>
+                Daily bacis
+              </h3>
+
+              <p className="pricing-description">
+                (100/ 14 = ₹7.14 per day)
+                completing your Testing Sprint.
+              </p>
+
+              <div className="pricing-example">
+                ₹100
+                <span>/ tester for 14 days</span>
+              </div>
+
+              <ul>
+
+
+
+                <li>
+                  <CheckCircle2 size={17} />
+                  Choose number of testers
+                </li>
+
+                <li>
+                  <CheckCircle2 size={17} />
+                  Define testing duration
+                </li>
+
+                <li>
+                  <CheckCircle2 size={17} />
+                  View total before payment
+                </li>
+
+              </ul>
+
+              <button
+                className="pricing-button"
+                onClick={() => navigate("/register")}
+              >
+                Create Testing Sprint
+              </button>
+
+            </div>
+
+
 
           </div>
 
@@ -970,7 +988,7 @@ function Home() {
 
             <div className="footer-email">
               <MessageSquareText size={17} />
-              support@Complete-ClosedTesting.com
+              info@mr-barcode.com , +91 7887587725
             </div>
 
           </div>
@@ -981,12 +999,13 @@ function Home() {
             <h4>Platform</h4>
 
             <a href="#apps">Browse Apps</a>
+            <a href="#daily">Daily Standup</a>
 
             <a href="#testers">Find Testers</a>
 
             <a href="#features">Features</a>
 
-            <a href="#pricing">Pricing</a>
+
 
           </div>
 
@@ -999,9 +1018,7 @@ function Home() {
 
             <a href="#features">Why Complete ClosedTesting</a>
 
-            <a href="/">Help Center</a>
 
-            <a href="/">Contact</a>
 
           </div>
 
@@ -1027,18 +1044,18 @@ function Home() {
 
           <span>
             © 2026 Complete ClosedTesting. All rights reserved.
+            A product by MR BARCODE INFOTECH.
           </span>
 
           <div>
 
-            <a href="/">
+            <a href="/privacy-policy">
               Privacy Policy
             </a>
 
-            <a href="/">
-              Terms
+            <a href="/terms-of-service">
+              Terms of Service
             </a>
-
           </div>
 
         </div>

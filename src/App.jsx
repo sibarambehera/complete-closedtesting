@@ -28,6 +28,8 @@ import AdminDevelopers from "./pages/admin/Developers";
 import CompletedTests from "./pages/tester/CompletedTests";
 import Wallet from "./pages/tester/Wallet";
 import Profile from "./pages/tester/Profile";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 
 function App() {
   return (
@@ -39,6 +41,14 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route
+            path="/privacy-policy"
+            element={<Privacy />}
+          />
+          <Route
+            path="/terms-of-service"
+            element={<Terms />}
+          />
 
           {/* Developer */}
           <Route

@@ -9,9 +9,18 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+
 import { registerUser } from "../services/AuthService";
+import { auth } from "../firebaseconfig";
 
 function Register() {
+  const navigate = useNavigate();
+
+  const [loading, setLoading] =
+    useState(false);
+
   const [role, setRole] = useState("developer");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -34,44 +43,92 @@ function Register() {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
 
-  if (formData.password !== formData.confirmPassword) {
-    alert("Passwords do not match.");
-    return;
-  }
+    e.preventDefault();
 
-  try {
-    const result = await registerUser({
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
-      password: formData.password,
-      role: role,
-    });
-
-    console.log("Registration successful:", result);
-
-    alert("Account created successfully!");
-
-  } catch (error) {
-    console.error("Registration error:", error);
-
-    if (error.code === "auth/email-already-in-use") {
-      alert("This email is already registered.");
-    } else if (error.code === "auth/invalid-email") {
-      alert("Invalid email address.");
-    } else if (error.code === "auth/weak-password") {
-      alert("Password should be at least 6 characters.");
-    } else {
-      alert("Registration failed. Please try again.");
+    if (formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match.");
+      return;
     }
-  }
-};
+
+    try {
+
+      setLoading(true);
+
+      const result = await registerUser({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        role: role
+      });
+
+      console.log(
+        "Registration successful:",
+        result
+      );
+
+      // Firebase automatically signs in the
+      // newly created user.
+      // Sign out because the account is inactive
+      // until Admin approval.
+      await signOut(auth);
+
+      alert(
+        "Account created successfully"
+      );
+
+      navigate("/login");
+
+    } catch (error) {
+
+      console.error(
+        "Registration error:",
+        error
+      );
+
+      if (error.code === "auth/email-already-in-use") {
+
+        alert(
+          "This email is already registered."
+        );
+
+      } else if (error.code === "auth/invalid-email") {
+
+        alert(
+          "Invalid email address."
+        );
+
+      } else if (error.code === "auth/weak-password") {
+
+        alert(
+          "Password should be at least 6 characters."
+        );
+
+      } else {
+
+        alert(
+          "Registration failed. Please try again."
+        );
+      }
+
+    } finally {
+
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="register-page">
-
+      {loading && (
+        <div className="register-loading-overlay">
+          <div className="register-loading-box">
+            <div className="register-spinner"></div>
+            <strong>Please wait...</strong>
+            <span>Creating your account</span>
+          </div>
+        </div>
+      )}
       {/* LEFT SIDE */}
 
       <div className="register-left">
@@ -432,11 +489,11 @@ function Register() {
 
               <span>
                 I agree to the{" "}
-                <a href="/">
+                <a href="/terms-of-service">
                   Terms of Service
                 </a>{" "}
                 and{" "}
-                <a href="/">
+                <a href="/privacy-policy">
                   Privacy Policy
                 </a>
                 .
@@ -450,8 +507,11 @@ function Register() {
             <button
               type="submit"
               className="register-submit"
+              disabled={loading}
             >
-              Create Account
+              {loading
+                ? "Please wait..."
+                : "Create Account"}
             </button>
 
           </form>
