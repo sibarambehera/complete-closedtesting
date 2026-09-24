@@ -24,7 +24,8 @@ import {
     initializeDailyStandups,
 } from "../../services/DailyStandupService";
 import TesterDailyStandupModal from "../../components/daily-standup/TesterDailyStandupModal";
-
+import SprintChatModal from "../../components/SprintChatModal";
+import { MessageCircle } from "lucide-react";
 
 function TesterSprintDetails() {
 
@@ -70,6 +71,8 @@ function TesterSprintDetails() {
     ] = useState("");
 
     const [isDailyStandupOpen, setIsDailyStandupOpen] = useState(false);
+    const [chatOpen, setChatOpen] = useState(false);
+
     // =====================================================
     // Load Sprint Details
     // =====================================================
@@ -542,6 +545,14 @@ function TesterSprintDetails() {
                         >
                             View Daily Activity
                         </button>
+                        <button
+                            type="button"
+                            className="tester-chat-button"
+                            onClick={() => setChatOpen(true)}
+                        >
+                            <MessageCircle size={17} />
+                            Chat
+                        </button>
                     </div>
 
 
@@ -555,6 +566,12 @@ function TesterSprintDetails() {
                 onClose={() => setIsDailyStandupOpen(false)}
                 dailyActivities={dailyActivities}
                 sprintTesterId={sprintTesterId}
+            />
+            <SprintChatModal
+                isOpen={chatOpen}
+                onClose={() => setChatOpen(false)}
+                sprintId={sprint.sprintId}
+                sprintName={app.appName || "Testing Sprint"}
             />
         </div>
     );

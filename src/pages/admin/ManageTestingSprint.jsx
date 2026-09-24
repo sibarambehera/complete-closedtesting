@@ -6,6 +6,7 @@ import {
     Smartphone,
     Check,
     UserPlus,
+    MessageCircle,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -16,6 +17,7 @@ import {
     assignTestersToSprint,
 } from "../../services/AppService";
 import AdminDailyStandupModal from "../../components/daily-standup/AdminDailyStandupModal";
+import SprintChatModal from "../../components/SprintChatModal";
 
 function ManageTestingSprint() {
 
@@ -31,7 +33,7 @@ function ManageTestingSprint() {
         useState(null);
     const [selectedTesters, setSelectedTesters] =
         useState([]);
-
+    const [chatOpen, setChatOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [isAssigning, setIsAssigning] = useState(false);
@@ -306,7 +308,14 @@ function ManageTestingSprint() {
                         </small>
 
                     </div>
-
+                    <button
+                        type="button"
+                        className="tester-chat-button"
+                        onClick={() => setChatOpen(true)}
+                    >
+                        <MessageCircle size={18} />
+                        Chat
+                    </button>
                 </div>
 
 
@@ -729,6 +738,12 @@ function ManageTestingSprint() {
                     setSelectedSprintTesterId(null);
                 }}
                 sprintTesterId={selectedSprintTesterId}
+            />
+            <SprintChatModal
+                isOpen={chatOpen}
+                onClose={() => setChatOpen(false)}
+                sprintId={sprintId}
+                sprintName={sprint.app?.appName || "Testing Sprint"}
             />
         </div>
     );

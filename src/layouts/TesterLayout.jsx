@@ -204,6 +204,25 @@ function TesterLayout({ children }) {
 
                 <div className="tester-sidebar-bottom">
 
+                    <button
+                        type="button"
+                        className="tester-logout-button"
+                        onClick={handleLogout}
+                        title={
+                            sidebarCollapsed
+                                ? "Logout"
+                                : ""
+                        }
+                    >
+
+                        <LogOut size={19} />
+
+                        <span>
+                            Logout
+                        </span>
+
+                    </button>
+                    
                     <div className="tester-profile">
 
                         <div className="tester-profile-icon">
@@ -232,24 +251,6 @@ function TesterLayout({ children }) {
                     </div>
 
 
-                    <button
-                        type="button"
-                        className="tester-logout-button"
-                        onClick={handleLogout}
-                        title={
-                            sidebarCollapsed
-                                ? "Logout"
-                                : ""
-                        }
-                    >
-
-                        <LogOut size={19} />
-
-                        <span>
-                            Logout
-                        </span>
-
-                    </button>
 
                 </div>
 

@@ -10,6 +10,7 @@ import {
     Eye,
     Check,
     X,
+    MessageCircle,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -22,7 +23,7 @@ import {
     markTesterTested,
 } from "../../services/AppService";
 import DeveloperDailyStandupModal from "../../components/daily-standup/DeveloperDailyStandupModal";
-
+import SprintChatModal from "../../components/SprintChatModal";
 
 function SprintDetails() {
     const navigate = useNavigate();
@@ -36,7 +37,7 @@ function SprintDetails() {
     const [error, setError] = useState("");
     const [isDailyStandupOpen, setIsDailyStandupOpen] = useState(false);
     const [selectedSprintTesterId, setSelectedSprintTesterId] = useState(null);
-
+    const [chatOpen, setChatOpen] = useState(false);
     const downloadedCount = testers.filter(
         (tester) => tester.downloaded === true
     ).length;
@@ -385,7 +386,14 @@ function SprintDetails() {
                             </p>
 
                         </div>
-
+                        <button
+                            type="button"
+                            className="tester-chat-button"
+                            onClick={() => setChatOpen(true)}
+                        >
+                            <MessageCircle size={18} />
+                            Chat
+                        </button>
                     </div>
 
 
@@ -937,7 +945,7 @@ function SprintDetails() {
 
                                         <div className="joined-tester-actions">
 
-                                            
+
                                             {/* Daily Activity */}
                                             <button
                                                 type="button"
@@ -991,6 +999,12 @@ function SprintDetails() {
                 }}
                 sprintTesterId={selectedSprintTesterId}
                 developerUid={user.uid}
+            />
+            <SprintChatModal
+                isOpen={chatOpen}
+                onClose={() => setChatOpen(false)}
+                sprintId={sprintId}
+                sprintName={app?.appName || "Testing Sprint"}
             />
         </div>
     );
