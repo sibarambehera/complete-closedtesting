@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import {
     LayoutDashboard,
     ClipboardList,
@@ -5,13 +7,25 @@ import {
     Wallet,
     User,
     LogOut,
+    Menu,
+    X,
+    PanelLeftClose,
+    PanelLeftOpen,
 } from "lucide-react";
 
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function TesterLayout({ children }) {
+
     const { user, logout } = useAuth();
+
+    const [sidebarCollapsed, setSidebarCollapsed] =
+        useState(false);
+
+    const [mobileSidebarOpen, setMobileSidebarOpen] =
+        useState(false);
+
 
     const navItems = [
         {
@@ -41,23 +55,57 @@ function TesterLayout({ children }) {
         },
     ];
 
+
     const handleLogout = async () => {
+
         try {
+
             await logout();
+
         } catch (error) {
+
             console.error(
                 "Tester logout error:",
                 error
             );
+
         }
+
     };
 
+
+    const closeMobileSidebar = () => {
+        setMobileSidebarOpen(false);
+    };
+
+
     return (
-        <div className="tester-layout">
+
+        <div
+            className={`tester-layout ${
+                sidebarCollapsed
+                    ? "tester-sidebar-collapsed"
+                    : ""
+            } ${
+                mobileSidebarOpen
+                    ? "tester-mobile-sidebar-open"
+                    : ""
+            }`}
+        >
+
+            {/* MOBILE OVERLAY */}
+
+            <div
+                className="tester-sidebar-overlay"
+                onClick={closeMobileSidebar}
+            />
+
 
             {/* SIDEBAR */}
 
             <aside className="tester-sidebar">
+
+                {/* LOGO */}
 
                 <div className="tester-sidebar-logo">
 
@@ -69,8 +117,45 @@ function TesterLayout({ children }) {
                         Complete Testing
                     </span>
 
+                    {/* DESKTOP COLLAPSE */}
+
+                    <button
+                        type="button"
+                        className="tester-sidebar-collapse-button"
+                        onClick={() =>
+                            setSidebarCollapsed(
+                                !sidebarCollapsed
+                            )
+                        }
+                        title={
+                            sidebarCollapsed
+                                ? "Expand sidebar"
+                                : "Collapse sidebar"
+                        }
+                    >
+                        {sidebarCollapsed ? (
+                            <PanelLeftOpen size={18} />
+                        ) : (
+                            <PanelLeftClose size={18} />
+                        )}
+                    </button>
+
+
+                    {/* MOBILE CLOSE */}
+
+                    <button
+                        type="button"
+                        className="tester-mobile-close-button"
+                        onClick={closeMobileSidebar}
+                        aria-label="Close menu"
+                    >
+                        <X size={21} />
+                    </button>
+
                 </div>
 
+
+                {/* NAVIGATION */}
 
                 <nav className="tester-sidebar-nav">
 
@@ -79,9 +164,13 @@ function TesterLayout({ children }) {
                         const Icon = item.icon;
 
                         return (
+
                             <NavLink
                                 key={item.path}
                                 to={item.path}
+                                onClick={
+                                    closeMobileSidebar
+                                }
                                 className={({ isActive }) =>
                                     `tester-nav-item ${
                                         isActive
@@ -89,7 +178,13 @@ function TesterLayout({ children }) {
                                             : ""
                                     }`
                                 }
+                                title={
+                                    sidebarCollapsed
+                                        ? item.label
+                                        : ""
+                                }
                             >
+
                                 <Icon size={20} />
 
                                 <span>
@@ -97,6 +192,7 @@ function TesterLayout({ children }) {
                                 </span>
 
                             </NavLink>
+
                         );
 
                     })}
@@ -104,17 +200,25 @@ function TesterLayout({ children }) {
                 </nav>
 
 
+                {/* BOTTOM */}
+
                 <div className="tester-sidebar-bottom">
 
                     <div className="tester-profile">
 
                         <div className="tester-profile-icon">
+
                             {user?.name
-                                ? user.name.charAt(0).toUpperCase()
+                                ? user.name
+                                    .charAt(0)
+                                    .toUpperCase()
                                 : "T"}
+
                         </div>
 
-                        <div>
+
+                        <div className="tester-profile-info">
+
                             <strong>
                                 {user?.name || "Tester"}
                             </strong>
@@ -122,6 +226,7 @@ function TesterLayout({ children }) {
                             <span>
                                 Tester
                             </span>
+
                         </div>
 
                     </div>
@@ -131,12 +236,19 @@ function TesterLayout({ children }) {
                         type="button"
                         className="tester-logout-button"
                         onClick={handleLogout}
+                        title={
+                            sidebarCollapsed
+                                ? "Logout"
+                                : ""
+                        }
                     >
+
                         <LogOut size={19} />
 
                         <span>
                             Logout
                         </span>
+
                     </button>
 
                 </div>
@@ -148,24 +260,48 @@ function TesterLayout({ children }) {
 
             <div className="tester-main">
 
+                {/* TOPBAR */}
+
                 <header className="tester-topbar">
 
+                    {/* MOBILE MENU */}
+
+                    <button
+                        type="button"
+                        className="tester-mobile-menu-button"
+                        onClick={() =>
+                            setMobileSidebarOpen(true)
+                        }
+                        aria-label="Open menu"
+                    >
+                        <Menu size={22} />
+                    </button>
+
+
                     <div>
+
                         <h2>
                             Tester Dashboard
                         </h2>
+
                     </div>
 
 
                     <div className="tester-topbar-profile">
 
                         <div className="tester-topbar-icon">
+
                             {user?.name
-                                ? user.name.charAt(0).toUpperCase()
+                                ? user.name
+                                    .charAt(0)
+                                    .toUpperCase()
                                 : "T"}
+
                         </div>
 
+
                         <div>
+
                             <strong>
                                 {user?.name || "Tester"}
                             </strong>
@@ -173,6 +309,7 @@ function TesterLayout({ children }) {
                             <span>
                                 Tester Account
                             </span>
+
                         </div>
 
                     </div>
@@ -180,13 +317,18 @@ function TesterLayout({ children }) {
                 </header>
 
 
+                {/* CONTENT */}
+
                 <main className="tester-content">
+
                     {children}
+
                 </main>
 
             </div>
 
         </div>
+
     );
 }
 

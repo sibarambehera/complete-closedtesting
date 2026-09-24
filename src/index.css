@@ -6880,3 +6880,279 @@ a {
 .tester-app-url-row button:hover {
     opacity: 0.9;
 }
+
+/*** mobile for tester */
+/* =========================================================
+   TESTER SIDEBAR COLLAPSE / MOBILE MENU
+   ========================================================= */
+
+.tester-sidebar {
+    transition: width 0.25s ease;
+}
+
+.tester-main {
+    transition: margin-left 0.25s ease;
+}
+
+
+/* ---------------------------------------------------------
+   Desktop collapsed sidebar
+   --------------------------------------------------------- */
+
+.tester-sidebar-collapsed .tester-sidebar {
+    width: 76px;
+}
+
+.tester-sidebar-collapsed .tester-main {
+    margin-left: 76px;
+}
+
+
+/* Hide text when collapsed */
+
+.tester-sidebar-collapsed
+.tester-sidebar-logo > span,
+
+.tester-sidebar-collapsed
+.tester-nav-item span,
+
+.tester-sidebar-collapsed
+.tester-profile-info,
+
+.tester-sidebar-collapsed
+.tester-logout-button span {
+    display: none;
+}
+
+
+/* Center collapsed navigation */
+
+.tester-sidebar-collapsed
+.tester-nav-item {
+    justify-content: center;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+
+/* Center profile */
+
+.tester-sidebar-collapsed
+.tester-profile {
+    justify-content: center;
+}
+
+
+/* Collapse button */
+
+.tester-sidebar-collapse-button {
+    margin-left: auto;
+
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    background: transparent;
+
+    color: #667085;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+}
+
+.tester-sidebar-collapse-button:hover {
+    background: #f2f4f7;
+    color: #1976f3;
+}
+
+
+/* ---------------------------------------------------------
+   Mobile menu button
+   --------------------------------------------------------- */
+
+.tester-mobile-menu-button {
+    display: none;
+
+    width: 38px;
+    height: 38px;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #d0d5dd;
+
+    background: #ffffff;
+
+    color: #344054;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+}
+
+.tester-mobile-menu-button:hover {
+    background: #f9fafb;
+}
+
+
+/* Mobile close button */
+
+.tester-mobile-close-button {
+    display: none;
+
+    width: 34px;
+    height: 34px;
+
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+
+    background: transparent;
+
+    color: #667085;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+}
+
+
+/* ---------------------------------------------------------
+   Overlay
+   --------------------------------------------------------- */
+
+.tester-sidebar-overlay {
+    display: none;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    /* Sidebar becomes off-canvas */
+
+    .tester-sidebar {
+        position: fixed;
+
+        top: 0;
+        left: 0;
+
+        width: 265px !important;
+        height: 100vh;
+
+        z-index: 1000;
+
+        transform: translateX(-100%);
+
+        transition:
+            transform 0.25s ease;
+
+        box-shadow:
+            4px 0 20px rgba(0, 0, 0, 0.15);
+    }
+
+
+    /* Open sidebar */
+
+    .tester-mobile-sidebar-open
+    .tester-sidebar {
+        transform: translateX(0);
+    }
+
+
+    /* Main takes complete width */
+
+    .tester-main,
+    .tester-sidebar-collapsed .tester-main {
+        margin-left: 0 !important;
+
+        width: 100%;
+    }
+
+
+    /* Mobile menu button */
+
+    .tester-mobile-menu-button {
+        display: flex;
+    }
+
+
+    /* Hide desktop collapse */
+
+    .tester-sidebar-collapse-button {
+        display: none;
+    }
+
+
+    /* Show mobile close */
+
+    .tester-mobile-close-button {
+        display: flex;
+    }
+
+
+    /* Sidebar overlay */
+
+    .tester-mobile-sidebar-open
+    .tester-sidebar-overlay {
+        display: block;
+
+        position: fixed;
+
+        inset: 0;
+
+        z-index: 999;
+
+        background: rgba(0, 0, 0, 0.35);
+    }
+
+
+    /* Topbar */
+
+    .tester-topbar {
+        display: flex;
+
+        align-items: center;
+
+        gap: 12px;
+
+        padding: 12px 16px;
+    }
+
+
+    .tester-topbar > div:first-of-type {
+        flex: 1;
+    }
+
+
+    .tester-topbar h2 {
+        font-size: 18px;
+    }
+
+
+    /* Hide detailed topbar profile on small screen */
+
+    .tester-topbar-profile > div:last-child {
+        display: none;
+    }
+
+
+    /* Content */
+
+    .tester-content {
+        width: 100%;
+
+        padding: 16px;
+    }
+
+}
+/*mobile for tester*/
