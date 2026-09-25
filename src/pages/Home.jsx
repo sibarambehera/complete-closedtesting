@@ -15,11 +15,31 @@ import {
   Camera,
   LockKeyhole,
 } from "lucide-react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Home() {
   const navigate = useNavigate();
+  useEffect(() => {
+    document.title =
+      "Google Play Closed Testing & Android Testers | Complete ClosedTesting";
 
+    const description =
+      "Complete ClosedTesting helps Android app developers find real Google Play testers, run 14-day Testing Sprints, track daily testing activity and manage tester payments.";
+
+    let metaDescription = document.querySelector(
+      'meta[name="description"]'
+    );
+
+    if (!metaDescription) {
+      metaDescription = document.createElement("meta");
+      metaDescription.setAttribute("name", "description");
+      document.head.appendChild(metaDescription);
+    }
+
+    metaDescription.setAttribute("content", description);
+  }, []);
+  
   const apps = [
     {
       initial: "C",

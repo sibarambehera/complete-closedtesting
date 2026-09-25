@@ -1,7 +1,27 @@
+import { useEffect } from "react";
 import { CheckCircle2, Mail, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 
 function Privacy() {
+    useEffect(() => {
+        document.title =
+            "Privacy Policy | Complete ClosedTesting";
+
+        const description =
+            "Read the Complete ClosedTesting Privacy Policy covering account information, testing activity, Firebase services, testing proof, UPI QR information and payments.";
+
+        let metaDescription = document.querySelector(
+            'meta[name="description"]'
+        );
+
+        if (!metaDescription) {
+            metaDescription = document.createElement("meta");
+            metaDescription.setAttribute("name", "description");
+            document.head.appendChild(metaDescription);
+        }
+
+        metaDescription.setAttribute("content", description);
+    }, []);
     return (
         <div className="privacy-page">
             <style>{`

@@ -1,7 +1,27 @@
+import { useEffect } from "react";
 import { CheckCircle2, Mail, ShieldCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 
 function Terms() {
+    useEffect(() => {
+        document.title =
+            "Terms of Service | Complete ClosedTesting";
+
+        const description =
+            "Read the Complete ClosedTesting Terms of Service covering Testing Sprints, Android app testing, tester payments, Google Play requirements and platform responsibilities.";
+
+        let metaDescription = document.querySelector(
+            'meta[name="description"]'
+        );
+
+        if (!metaDescription) {
+            metaDescription = document.createElement("meta");
+            metaDescription.setAttribute("name", "description");
+            document.head.appendChild(metaDescription);
+        }
+
+        metaDescription.setAttribute("content", description);
+    }, []);
     return (
         <div className="terms-page">
 
