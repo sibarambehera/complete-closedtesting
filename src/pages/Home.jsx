@@ -38,8 +38,52 @@ function Home() {
     }
 
     metaDescription.setAttribute("content", description);
+    const canonicalUrl =
+      "https://complete-closedtesting.com/";
+
+    let canonicalLink = document.querySelector(
+      'link[rel="canonical"]'
+    );
+
+    if (!canonicalLink) {
+      canonicalLink = document.createElement("link");
+      canonicalLink.setAttribute("rel", "canonical");
+      document.head.appendChild(canonicalLink);
+    }
+
+    canonicalLink.setAttribute("href", canonicalUrl);
+
+    const structuredData = {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Complete ClosedTesting",
+      "url": "https://complete-closedtesting.com/",
+      "logo": "https://complete-closedtesting.com/favicon.png",
+      "description":
+        "Complete ClosedTesting helps Android app developers find real Google Play testers, run structured Testing Sprints, track daily testing activity and manage tester payments.",
+      "email": "info@mr-barcode.com",
+      "parentOrganization": {
+        "@type": "Organization",
+        "name": "MR BARCODE INFOTECH"
+      }
+    };
+
+    let structuredDataScript = document.getElementById(
+      "complete-closedtesting-structured-data"
+    );
+
+    if (!structuredDataScript) {
+      structuredDataScript = document.createElement("script");
+      structuredDataScript.id =
+        "complete-closedtesting-structured-data";
+      structuredDataScript.type = "application/ld+json";
+      document.head.appendChild(structuredDataScript);
+    }
+
+    structuredDataScript.textContent =
+      JSON.stringify(structuredData);
   }, []);
-  
+
   const apps = [
     {
       initial: "C",

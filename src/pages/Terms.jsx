@@ -21,6 +21,20 @@ function Terms() {
         }
 
         metaDescription.setAttribute("content", description);
+        const canonicalUrl =
+            "https://complete-closedtesting.com/terms-of-service";
+
+        let canonicalLink = document.querySelector(
+            'link[rel="canonical"]'
+        );
+
+        if (!canonicalLink) {
+            canonicalLink = document.createElement("link");
+            canonicalLink.setAttribute("rel", "canonical");
+            document.head.appendChild(canonicalLink);
+        }
+
+        canonicalLink.setAttribute("href", canonicalUrl);
     }, []);
     return (
         <div className="terms-page">
